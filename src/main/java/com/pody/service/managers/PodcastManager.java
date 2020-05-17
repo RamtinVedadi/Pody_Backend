@@ -1,0 +1,50 @@
+package com.pody.service.managers;
+
+import com.pody.dto.requests.PodcastCreateDto;
+import com.pody.dto.requests.RssDataDto;
+import com.pody.dto.requests.StringRequestDto;
+import com.pody.dto.requests.TwoIDRequestDto;
+import com.pody.dto.responses.IdResponseDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
+
+public interface PodcastManager {
+
+    ResponseEntity create(PodcastCreateDto dto);
+
+    ResponseEntity read(UUID id);
+
+    ResponseEntity update(PodcastCreateDto dto, UUID id);
+
+    ResponseEntity delete(UUID id);
+
+    ResponseEntity uploadPodcast(MultipartFile image, MultipartFile audio, UUID podcastId);
+
+    ResponseEntity updateViewCount(UUID podcastId);
+
+    ResponseEntity updateLikeCount(UUID podcastId);
+
+    ResponseEntity updateDisLikeCount(UUID podcastId);
+
+    ResponseEntity listPodcastsEachUser(UUID userId);
+
+    ResponseEntity listPodcastsMostLiked();
+
+    ResponseEntity listPodcastsMostViewed();
+
+    ResponseEntity listPodcastsSuggested();
+
+    ResponseEntity listPodcastsNewAdded();
+
+    ResponseEntity addToListenLater(TwoIDRequestDto dto);
+
+    ResponseEntity getRssData(RssDataDto rssDataDto);
+
+    ResponseEntity listTrendingPodcasts();
+
+    ResponseEntity homePagePodcastList(IdResponseDto dto);
+
+    ResponseEntity getAllDataWithOnlyRssUrl(StringRequestDto dto);
+}
