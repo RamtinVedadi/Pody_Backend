@@ -8,6 +8,7 @@ import com.pody.dto.requests.TwoIDRequestDto;
 import com.pody.dto.responses.HomePageListDto;
 import com.pody.dto.responses.IdResponseDto;
 import com.pody.dto.responses.PodcastReadResultDto;
+import com.pody.dto.responses.TrendingResponseDto;
 import com.pody.model.*;
 import com.pody.repository.*;
 import com.pody.service.ErrorJsonHandler;
@@ -744,7 +745,16 @@ public class PodcastManagerImpl implements PodcastManager {
                     .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
                             ArrayList::new));
 
-            return ResponseEntity.ok(finalList);
+            List<Category> categories = categoryRepository.listTrendingCategory(PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "p.viewCount")));
+            List<Category> finalCategoryList = categories.stream()
+                    .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(Category::getId))),
+                            ArrayList::new));
+
+            TrendingResponseDto trd = new TrendingResponseDto();
+            trd.setPodcasts(finalList);
+            trd.setCategories(finalCategoryList);
+
+            return ResponseEntity.ok(trd);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }

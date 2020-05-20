@@ -2,6 +2,7 @@ package com.pody.repository;
 
 import com.pody.dto.repositories.CategorySearchDto;
 import com.pody.model.Category;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +25,11 @@ public interface CategoryRepository extends AbstractRepository<Category, UUID> {
 
     @Query("select new Category(c.id, c.name, c.imageAddress) from Category c where c.parent.id is null ")
     List<Category> listCategoryParents(Sort sort);
+
+    @Query("select new Category(c.id, c.name, c.imageAddress) " +
+            "from Category c inner join PodcastCategory pc on c.id = pc.category.id " +
+            " inner join Podcast p on pc.podcast.id = p.id ")
+    List<Category> listTrendingCategory(Pageable pageable);
 
     @Query("select new Category(c.id, c.name, c.imageAddress) from Category c where c.parent.id  = :id ")
     List<Category> listCategoryChildren(@Param("id") UUID id);
