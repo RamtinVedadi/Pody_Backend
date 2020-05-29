@@ -77,8 +77,8 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity listPodcastsNewAdded() {
-        return podcastManager.listPodcastsNewAdded();
+    public ResponseEntity listPodcastsNewAdded(@PathVariable int till, @PathVariable int to) {
+        return podcastManager.listPodcastsNewAdded(till, to);
     }
 
     @Override
@@ -114,5 +114,10 @@ public class PodcastControllerImpl implements PodcastController {
     @Override
     public ResponseEntity getAllDataWithOnlyRssUrl(@RequestBody StringRequestDto dto) {
         return podcastManager.getAllDataWithOnlyRssUrl(dto);
+    }
+
+    @Override
+    public ResponseEntity listFollowingPodcasts(@RequestBody IdResponseDto dto) {
+        return podcastManager.listFollowingPodcasts(dto);
     }
 }

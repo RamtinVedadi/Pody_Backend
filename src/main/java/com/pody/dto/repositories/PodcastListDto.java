@@ -15,8 +15,6 @@ public interface PodcastListDto {
 
     Integer getSeasonNumber();
 
-    String getShortDescription();
-
     String getUserTitle();
 
     String getDuration();
@@ -30,10 +28,4 @@ public interface PodcastListDto {
     String getProfileImageAddress();
 
     String getUsername();
-
-    UUID getCategoryId();
-
-    String getCategoryName();
-
-    String getCategoryIcon();
 }

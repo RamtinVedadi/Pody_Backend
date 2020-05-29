@@ -33,7 +33,7 @@ public class UrlStringMapping {
     public static final String URL024 = "/api/podcast/list/like";//GET لیست محبوب ترین ها
     public static final String URL025 = "/api/podcast/list/view";//GET لیست پر بازدید ترین ها
     public static final String URL026 = "/api/podcast/list/suggested";//GET لیست پیشنهادی
-    public static final String URL027 = "/api/podcast/list/new";//GET لیست جدیدترین
+    public static final String URL027 = "/api/podcast/list/new/{till}/{to}";//GET لیست جدیدترین
     public static final String URL028 = "/api/podcast/listenLater";//POST
     public static final String URL029 = "/api/podcast/{id}/history";//GET
     public static final String URL071 = "/api/podcast/list/{id}/history";//GET
@@ -41,6 +41,7 @@ public class UrlStringMapping {
     public static final String URL075 = "/api/podcast/list/trending";//GET
     public static final String URL077 = "/api/podcast/list/home";//Post
     public static final String URL082 = "/api/admin/podcast/rss";//Post
+    public static final String URL083 = "/api/podcast/list/followings";//Post لیست پادکست پادکسترهای دنبال شده
 
     //category urls
     public static final String URL030 = "/api/admin/category/create";//POST

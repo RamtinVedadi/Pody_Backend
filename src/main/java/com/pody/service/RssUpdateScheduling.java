@@ -155,6 +155,9 @@ public class RssUpdateScheduling {
                                 //Short Description
                                 try {
                                     String shortDescription = eElement.getElementsByTagName("itunes:summary").item(0).getTextContent();
+                                    if (shortDescription.length() > 150) {
+                                        shortDescription = shortDescription.substring(0, 149);
+                                    }
                                     if (shortDescription != null || shortDescription != "") {
                                         podcast.setShortDescription(shortDescription);
                                     } else {

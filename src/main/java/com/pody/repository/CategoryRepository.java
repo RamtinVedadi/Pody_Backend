@@ -23,13 +23,17 @@ public interface CategoryRepository extends AbstractRepository<Category, UUID> {
             " where c.name like :name or c.englishName like :name or u.username like :name or u.title like :name")
     List<CategorySearchDto> searchCategory(@Param("name") String name);
 
+    @Query("select distinct c.id as id, c.name as name, c.imageAddress as imageAddress " +
+            " from Category c inner join CategoryFollow cf on c.id = cf.category.id where cf.follower.id = :userId")
+    List<CategorySearchDto> followingCategoryList(@Param("userId") UUID userId);
+
     @Query("select new Category(c.id, c.name, c.imageAddress) from Category c where c.parent.id is null ")
     List<Category> listCategoryParents(Sort sort);
 
-    @Query("select new Category(c.id, c.name, c.imageAddress) " +
-            "from Category c inner join PodcastCategory pc on c.id = pc.category.id " +
+    @Query("select distinct c.id as id, c.name as name, c.imageAddress as imageAddress " +
+            " from Category c inner join PodcastCategory pc on c.id = pc.category.id " +
             " inner join Podcast p on pc.podcast.id = p.id ")
-    List<Category> listTrendingCategory(Pageable pageable);
+    List<CategorySearchDto> listTrendingCategory(Pageable pageable);
 
     @Query("select new Category(c.id, c.name, c.imageAddress) from Category c where c.parent.id  = :id ")
     List<Category> listCategoryChildren(@Param("id") UUID id);

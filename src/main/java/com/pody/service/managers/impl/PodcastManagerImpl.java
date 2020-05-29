@@ -1,14 +1,12 @@
 package com.pody.service.managers.impl;
 
 import com.pody.dto.repositories.*;
+import com.pody.dto.repositories.PodcastListDto;
 import com.pody.dto.requests.PodcastCreateDto;
 import com.pody.dto.requests.RssDataDto;
 import com.pody.dto.requests.StringRequestDto;
 import com.pody.dto.requests.TwoIDRequestDto;
-import com.pody.dto.responses.HomePageListDto;
-import com.pody.dto.responses.IdResponseDto;
-import com.pody.dto.responses.PodcastReadResultDto;
-import com.pody.dto.responses.TrendingResponseDto;
+import com.pody.dto.responses.*;
 import com.pody.model.*;
 import com.pody.repository.*;
 import com.pody.service.ErrorJsonHandler;
@@ -457,14 +455,10 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override //Tested
-    public ResponseEntity listPodcastsNewAdded() {
+    public ResponseEntity listPodcastsNewAdded(int till, int to) {
+        //default till , to must be 0 , 20
         try {
-            Calendar date = Calendar.getInstance();
-            date.add(Calendar.DATE, -7);
-            Date previousDate = date.getTime();
-            Date now = new Date();
-
-            List<PodcastListDto> result = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "createdDate")));
+            List<PodcastListDto> result = podcastRepository.listMostViewedAndLiked(PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
 
             return ResponseEntity.ok(result);
         } catch (NullPointerException e) {
@@ -639,6 +633,9 @@ public class PodcastManagerImpl implements PodcastManager {
                             //Short Description
                             try {
                                 String shortDescription = eElement.getElementsByTagName("itunes:summary").item(0).getTextContent();
+                                if (shortDescription.length() > 150) {
+                                    shortDescription = shortDescription.substring(0, 149);
+                                }
                                 if (shortDescription != null || shortDescription != "") {
                                     podcast.setShortDescription(shortDescription);
                                 } else {
@@ -745,14 +742,14 @@ public class PodcastManagerImpl implements PodcastManager {
                     .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
                             ArrayList::new));
 
-            List<Category> categories = categoryRepository.listTrendingCategory(PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "p.viewCount")));
-            List<Category> finalCategoryList = categories.stream()
-                    .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(Category::getId))),
-                            ArrayList::new));
+            List<CategorySearchDto> categories = categoryRepository.listTrendingCategory(PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "p.viewCount")));
+//            List<Category> finalCategoryList = categories.stream()
+//                    .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(Category::getId))),
+//                            ArrayList::new));
 
             TrendingResponseDto trd = new TrendingResponseDto();
             trd.setPodcasts(finalList);
-            trd.setCategories(finalCategoryList);
+            trd.setCategories(categories);
 
             return ResponseEntity.ok(trd);
         } catch (NullPointerException e) {
@@ -793,6 +790,19 @@ public class PodcastManagerImpl implements PodcastManager {
 //                List<PodcastListDto> suggestions = null;
 //                hpld.setSuggestions(suggestions);
 //            }
+
+            //Following Podcasters New Episodes
+            if (dto.getId() != null) {
+                Calendar date1 = Calendar.getInstance();
+                date1.add(Calendar.DATE, -30);
+                Date lastMonth = date1.getTime();
+                Date today = new Date();
+
+                List<PodcastListDto> followingPodcasts = podcastRepository.listFollowingPodcasters(dto.getId(), lastMonth, today, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "viewCount")));
+                hpld.setFollowings(followingPodcasts);
+            } else {
+                hpld.setFollowings(new ArrayList<>());
+            }
 
             //News Section
             if (dto.getId() == null) {
@@ -880,7 +890,7 @@ public class PodcastManagerImpl implements PodcastManager {
                                 creatingUser.setProfileImageAddress(profileImageAddress);
                             }
                         } catch (NullPointerException e) {
-                            creatingUser.setProfileImageAddress("http://localhost/profileImages/profile.png");
+                            creatingUser.setProfileImageAddress("http://194.5.175.213/profileImages/profile.png");
                         }
                         //User Email
                         try {
@@ -1049,6 +1059,9 @@ public class PodcastManagerImpl implements PodcastManager {
                             //Short Description
                             try {
                                 String shortDescription = eElement.getElementsByTagName("itunes:summary").item(0).getTextContent();
+                                if (shortDescription.length() > 150) {
+                                    shortDescription = shortDescription.substring(0, 149);
+                                }
                                 if (shortDescription != null || shortDescription != "") {
                                     podcast.setShortDescription(shortDescription);
                                 } else {
@@ -1106,7 +1119,8 @@ public class PodcastManagerImpl implements PodcastManager {
                             pc.setSubCategory(subCategory);
                             podcastCategoryRepository.save(pc);
                         }
-                        return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                        LoginResultResponseDto lrrd = modelMapper.map(podcasterDetail, LoginResultResponseDto.class);
+                        return ResponseEntity.ok(lrrd);
                     } else {
                         return new ResponseEntity(ErrorJsonHandler.NOT_SUCCESSFUL, HttpStatus.BAD_REQUEST);
                     }
@@ -1114,6 +1128,26 @@ public class PodcastManagerImpl implements PodcastManager {
                     e.printStackTrace();
                     return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity listFollowingPodcasts(IdResponseDto dto) {
+        //this id is logined UserId
+        try {
+            if (dto != null) {
+                Calendar date = Calendar.getInstance();
+                date.add(Calendar.DATE, -30);
+                Date previousDate = date.getTime();
+                Date now = new Date();
+
+                List<PodcastListDto> result = podcastRepository.listFollowingPodcasters(dto.getId(), previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "viewCount")));
+                return ResponseEntity.ok(result);
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
             }

@@ -36,7 +36,7 @@ public interface PodcastManager {
 
     ResponseEntity listPodcastsSuggested();
 
-    ResponseEntity listPodcastsNewAdded();
+    ResponseEntity listPodcastsNewAdded(int till, int to);
 
     ResponseEntity addToListenLater(TwoIDRequestDto dto);
 
@@ -47,4 +47,6 @@ public interface PodcastManager {
     ResponseEntity homePagePodcastList(IdResponseDto dto);
 
     ResponseEntity getAllDataWithOnlyRssUrl(StringRequestDto dto);
+
+    ResponseEntity listFollowingPodcasts(IdResponseDto dto);
 }

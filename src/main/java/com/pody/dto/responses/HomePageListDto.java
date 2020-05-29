@@ -30,6 +30,9 @@ public class HomePageListDto {
     @JsonProperty("mostLike")
     List<PodcastListDto> mostLiked;
 
+    @JsonProperty("followings")
+    List<PodcastListDto> followings;
+
     @JsonProperty("news")
     List<NewsListDto> news;
 

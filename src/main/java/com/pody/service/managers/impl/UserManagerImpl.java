@@ -1,5 +1,6 @@
 package com.pody.service.managers.impl;
 
+import com.pody.dto.repositories.CategorySearchDto;
 import com.pody.dto.repositories.ChannelsListDto;
 import com.pody.dto.repositories.NewsListDto;
 import com.pody.dto.repositories.PodcastListDto;
@@ -9,12 +10,10 @@ import com.pody.dto.requests.TwoIDRequestDto;
 import com.pody.dto.responses.IdResponseDto;
 import com.pody.dto.responses.SubscriptionsDto;
 import com.pody.dto.responses.UserReadResultDto;
+import com.pody.dto.responses.UserSubscriptionsListDto;
 import com.pody.model.User;
 import com.pody.model.UserFollow;
-import com.pody.repository.NewsRepository;
-import com.pody.repository.PodcastRepository;
-import com.pody.repository.UserFollowRepository;
-import com.pody.repository.UserRepository;
+import com.pody.repository.*;
 import com.pody.repository.alt.AltUserRepository;
 import com.pody.service.ErrorJsonHandler;
 import com.pody.service.PasswordEncoding;
@@ -45,6 +44,7 @@ import java.util.UUID;
 @Transactional
 public class UserManagerImpl implements UserManager {
     private UserFollowRepository userFollowRepository;
+    private CategoryRepository categoryRepository;
     private AltUserRepository altUserRepository;
     private PodcastRepository podcastRepository;
     private NewsRepository newsRepository;
@@ -52,8 +52,11 @@ public class UserManagerImpl implements UserManager {
     private ModelMapper modelMapper;
 
     @Autowired
-    public UserManagerImpl(UserFollowRepository userFollowRepository, AltUserRepository altUserRepository, PodcastRepository podcastRepository, NewsRepository newsRepository, UserRepository userRepository, ModelMapper modelMapper) {
+    public UserManagerImpl(UserFollowRepository userFollowRepository, CategoryRepository categoryRepository,
+                           AltUserRepository altUserRepository, PodcastRepository podcastRepository,
+                           NewsRepository newsRepository, UserRepository userRepository, ModelMapper modelMapper) {
         this.userFollowRepository = userFollowRepository;
+        this.categoryRepository = categoryRepository;
         this.altUserRepository = altUserRepository;
         this.podcastRepository = podcastRepository;
         this.newsRepository = newsRepository;
@@ -326,6 +329,8 @@ public class UserManagerImpl implements UserManager {
         //This is logined user id
         try {
             if (id != null) {
+                UserSubscriptionsListDto usld = new UserSubscriptionsListDto();
+
                 List<ChannelsListDto> listFollowings = userRepository.listFollowingChannels(id, PageRequest.of(0, 15));
                 List<SubscriptionsDto> finalList = new ArrayList<>();
 
@@ -337,8 +342,12 @@ public class UserManagerImpl implements UserManager {
 
                     finalList.add(sd);
                 }
+                usld.setFollowingChannels(finalList);
 
-                return ResponseEntity.ok(finalList);
+                List<CategorySearchDto> followingCategories = categoryRepository.followingCategoryList(id);
+                usld.setFollowingCategories(followingCategories);
+
+                return ResponseEntity.ok(usld);
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
             }

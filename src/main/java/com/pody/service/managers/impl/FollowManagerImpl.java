@@ -81,7 +81,7 @@ public class FollowManagerImpl implements FollowManager {
         }
     }
 
-    @Override
+    @Override //Tested
     public ResponseEntity createCategoryFollow(CategoryFollow categoryFollow) {
         try {
             if (categoryFollow != null) {

@@ -31,7 +31,7 @@ public abstract class AbstractModelUser implements Serializable {
     @Column
     private String address;
 
-    @Column
+    @Column(length = 800)
     private String profileImageAddress;
 
     @Column
