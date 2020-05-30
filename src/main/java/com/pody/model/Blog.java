@@ -19,4 +19,7 @@ public class Blog {
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private UUID id;
+
+    @Column(length = 65535,columnDefinition="Text")
+    private String description;
 }

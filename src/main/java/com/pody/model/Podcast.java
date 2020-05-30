@@ -18,7 +18,7 @@ public class Podcast extends AbstractModel {
     @Column(length = 150)
     private String shortDescription;
 
-    @Column(length = 5000)
+    @Column(length = 65535,columnDefinition="Text")
     private String description;
 
     @Column
@@ -30,7 +30,7 @@ public class Podcast extends AbstractModel {
     @Column
     private int viewCount = 0;
 
-    @Column(nullable = true, length = 2000)
+    @Column(nullable = true, length = 65535,columnDefinition="Text")
     private String audioAddress;
 
     @Column

@@ -26,6 +26,6 @@ public abstract class AbstractModel implements Serializable {
     @Column
     private Date updateDate;
 
-    @Column(length = 2000)
+    @Column(length = 65535, columnDefinition = "Text")
     private String imageAddress;
 }
