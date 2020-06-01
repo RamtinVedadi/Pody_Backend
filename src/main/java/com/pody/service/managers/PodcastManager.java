@@ -30,11 +30,11 @@ public interface PodcastManager {
 
     ResponseEntity listPodcastsEachUser(UUID userId);
 
-    ResponseEntity listPodcastsMostLiked();
+    ResponseEntity listPodcastsMostLiked(int till, int to);
 
-    ResponseEntity listPodcastsMostViewed();
+    ResponseEntity listPodcastsMostViewed(int till, int to);
 
-    ResponseEntity listPodcastsSuggested();
+    ResponseEntity listPodcastsSuggested(int till, int to);
 
     ResponseEntity listPodcastsNewAdded(int till, int to);
 
@@ -48,5 +48,5 @@ public interface PodcastManager {
 
     ResponseEntity getAllDataWithOnlyRssUrl(StringRequestDto dto);
 
-    ResponseEntity listFollowingPodcasts(IdResponseDto dto);
+    ResponseEntity listFollowingPodcasts(int till, int to, IdResponseDto dto);
 }

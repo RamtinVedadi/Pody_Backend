@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = {"*", "https://pody.ir" , "https://www.pody.ir"}, maxAge = 3600)
+@CrossOrigin(origins = {"*", "https://pody.ir", "https://www.pody.ir"}, maxAge = 3600)
 public class PodcastControllerImpl implements PodcastController {
 
     @Autowired
@@ -62,18 +62,18 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity listPodcastsMostLiked() {
-        return podcastManager.listPodcastsMostLiked();
+    public ResponseEntity listPodcastsMostLiked(@PathVariable int till, @PathVariable int to) {
+        return podcastManager.listPodcastsMostLiked(till, to);
     }
 
     @Override
-    public ResponseEntity listPodcastsMostViewed() {
-        return podcastManager.listPodcastsMostViewed();
+    public ResponseEntity listPodcastsMostViewed(@PathVariable int till, @PathVariable int to) {
+        return podcastManager.listPodcastsMostViewed(till, to);
     }
 
     @Override
-    public ResponseEntity listPodcastsSuggested() {
-        return podcastManager.listPodcastsSuggested();
+    public ResponseEntity listPodcastsSuggested(@PathVariable int till, @PathVariable int to) {
+        return podcastManager.listPodcastsSuggested(till, to);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity listFollowingPodcasts(@RequestBody IdResponseDto dto) {
-        return podcastManager.listFollowingPodcasts(dto);
+    public ResponseEntity listFollowingPodcasts(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
+        return podcastManager.listFollowingPodcasts(till, to, dto);
     }
 }

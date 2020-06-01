@@ -426,9 +426,10 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override //Tested
-    public ResponseEntity listPodcastsMostLiked() {
+    public ResponseEntity listPodcastsMostLiked(int till, int to) {
         try {
-            List<PodcastListDto> result = podcastRepository.listMostViewedAndLiked(PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "likeCount")));
+            //default till , to must be 0 , 20
+            List<PodcastListDto> result = podcastRepository.listMostViewedAndLiked(PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "likeCount")));
             return ResponseEntity.ok(result);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -436,9 +437,10 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override //Tested
-    public ResponseEntity listPodcastsMostViewed() {
+    public ResponseEntity listPodcastsMostViewed(int till, int to) {
         try {
-            List<PodcastListDto> result = podcastRepository.listMostViewedAndLiked(PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "viewCount")));
+            //default till , to must be 0 , 20
+            List<PodcastListDto> result = podcastRepository.listMostViewedAndLiked(PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "viewCount")));
             return ResponseEntity.ok(result);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -446,9 +448,12 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override
-    public ResponseEntity listPodcastsSuggested() {
+    public ResponseEntity listPodcastsSuggested(int till, int to) {
         try {
-            return ResponseEntity.ok("");
+            //default till , to must be 0 , 20
+            String orderBy[] = {"createdDate", "viewCount", "likeCount"};
+            List<PodcastListDto> result = podcastRepository.listMostViewedAndLiked(PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, orderBy)));
+            return ResponseEntity.ok(result);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -456,8 +461,8 @@ public class PodcastManagerImpl implements PodcastManager {
 
     @Override //Tested
     public ResponseEntity listPodcastsNewAdded(int till, int to) {
-        //default till , to must be 0 , 20
         try {
+            //default till , to must be 0 , 20
             List<PodcastListDto> result = podcastRepository.listMostViewedAndLiked(PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
 
             return ResponseEntity.ok(result);
@@ -798,7 +803,7 @@ public class PodcastManagerImpl implements PodcastManager {
                 Date lastMonth = date1.getTime();
                 Date today = new Date();
 
-                List<PodcastListDto> followingPodcasts = podcastRepository.listFollowingPodcasters(dto.getId(), lastMonth, today, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "viewCount")));
+                List<PodcastListDto> followingPodcasts = podcastRepository.listFollowingPodcasters(dto.getId(), lastMonth, today, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "createdDate")));
                 hpld.setFollowings(followingPodcasts);
             } else {
                 hpld.setFollowings(new ArrayList<>());
@@ -1137,16 +1142,12 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override
-    public ResponseEntity listFollowingPodcasts(IdResponseDto dto) {
-        //this id is logined UserId
+    public ResponseEntity listFollowingPodcasts(int till, int to, IdResponseDto dto) {
         try {
+            //this id is logined UserId
+            //till 0 , to 20
             if (dto != null) {
-                Calendar date = Calendar.getInstance();
-                date.add(Calendar.DATE, -30);
-                Date previousDate = date.getTime();
-                Date now = new Date();
-
-                List<PodcastListDto> result = podcastRepository.listFollowingPodcasters(dto.getId(), previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "viewCount")));
+                List<PodcastListDto> result = podcastRepository.listFollowingPodcastersInfinite(dto.getId(), PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
                 return ResponseEntity.ok(result);
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);

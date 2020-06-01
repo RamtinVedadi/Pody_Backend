@@ -40,13 +40,13 @@ public interface PodcastController {
     ResponseEntity listPodcastsEachUser(UUID userId);
 
     @GetMapping(value = UrlStringMapping.URL024, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity listPodcastsMostLiked();
+    ResponseEntity listPodcastsMostLiked(int till, int to);
 
     @GetMapping(value = UrlStringMapping.URL025, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity listPodcastsMostViewed();
+    ResponseEntity listPodcastsMostViewed(int till, int to);
 
     @GetMapping(value = UrlStringMapping.URL026, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity listPodcastsSuggested();
+    ResponseEntity listPodcastsSuggested(int till, int to);
 
     @GetMapping(value = UrlStringMapping.URL027, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listPodcastsNewAdded(int till, int to);
@@ -73,5 +73,5 @@ public interface PodcastController {
     ResponseEntity getAllDataWithOnlyRssUrl(StringRequestDto dto);
 
     @PostMapping(value = UrlStringMapping.URL083, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity listFollowingPodcasts(IdResponseDto dto);
+    ResponseEntity listFollowingPodcasts(int till, int to, IdResponseDto dto);
 }
