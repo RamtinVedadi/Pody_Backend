@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = {"*", "https://pody.ir" , "https://www.pody.ir"}, maxAge = 3600)
+@CrossOrigin(origins = {"http://pody.ir", "http://www.pody.ir"}, maxAge = 3600)
 public class CommentControllerImpl implements CommentController {
     @Autowired
     private CommentManager commentManager;
