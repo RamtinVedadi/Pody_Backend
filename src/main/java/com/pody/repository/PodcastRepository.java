@@ -81,10 +81,12 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
     List<PodcastListDto> listPodcastsEachCategory(@Param("categoryId") UUID categoryId, Pageable pageable);
 
     @Query("select distinct p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
-            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.description as description," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.description as description, c.id as categoryId," +
             " p.createdDate as createdDate, p.duration as duration, p.viewCount as viewCount , p.likeCount as likeCount," +
-            " u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
+            " u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress " +
             " from Podcast p inner join User u on p.user.id = u.id " +
+            " inner join PodcastCategory pc on p.id = pc.podcast.id " +
+            " inner join Category c on pc.category.id = c.id " +
             " where p.id = :id")
     PodcastReadDto readPodcast(@Param("id") UUID id);
 
