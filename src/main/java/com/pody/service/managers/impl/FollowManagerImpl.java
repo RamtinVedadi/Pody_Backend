@@ -103,6 +103,7 @@ public class FollowManagerImpl implements FollowManager {
     @Override
     public ResponseEntity deleteCategoryFollow(TwoIDRequestDto dto) {
         try {
+            //first id is for category and second id is for follower
             if (dto.getFirstID() != null && dto.getSecondID() != null) {
                 int result = categoryFollowRepository.deleteFollowership(dto.getFirstID(), dto.getSecondID());
 

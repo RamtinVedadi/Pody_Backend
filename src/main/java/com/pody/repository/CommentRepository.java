@@ -24,9 +24,15 @@ public interface CommentRepository extends AbstractRepository<Comment, UUID> {
 
     List<Comment> findAllByPodcast(Podcast p);
 
-    @Query("select c.id as commentId, c.description as description, u.id as userId," +
+    @Query("select c.id as commentId, c.description as description, u.id as userId, c.createdDate as createdDate," +
             " u.profileImageAddress as userImage, u.username as username, u.title as userTitle  " +
             " from Comment c inner join User u on c.user.id = u.id " +
             " where c.podcast.id = :pid and c.isApprove = true")
     List<PodcastCommentListDto> eachPodcastCommentsList(@Param("pid") UUID podcastId, Pageable pageable);
+
+    @Query("select c.id as commentId, c.description as description, u.id as userId, c.createdDate as createdDate," +
+            " u.profileImageAddress as userImage, u.username as username, u.title as userTitle  " +
+            " from Comment c inner join User u on c.user.id = u.id " +
+            " where c.id = :commentId ")
+    PodcastCommentListDto createCommentResult(@Param("commentId") UUID commentId);
 }

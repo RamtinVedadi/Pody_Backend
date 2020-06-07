@@ -34,5 +34,8 @@ public interface PodcastReadDto {
     String getUsername();
 
     UUID getCategoryId();
-}
 
+    String getCategoryName();
+
+    String getCategoryIcon();
+}

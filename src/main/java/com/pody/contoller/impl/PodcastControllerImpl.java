@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = {"http://pody.ir", "http://www.pody.ir"}, maxAge = 3600)
+@CrossOrigin(origins = {"*", "http://pody.ir", "http://www.pody.ir"}, maxAge = 3600)
 public class PodcastControllerImpl implements PodcastController {
 
     @Autowired
@@ -87,6 +87,11 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
+    public ResponseEntity podcastListenLaterList(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
+        return podcastManager.podcastListenLaterList(till, to, dto);
+    }
+
+    @Override
     public ResponseEntity addToHistory(@PathVariable UUID id) {
         return null;
     }
@@ -119,5 +124,10 @@ public class PodcastControllerImpl implements PodcastController {
     @Override
     public ResponseEntity listFollowingPodcasts(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
         return podcastManager.listFollowingPodcasts(till, to, dto);
+    }
+
+    @Override
+    public ResponseEntity homePagePodcastListMobile(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
+        return podcastManager.homePagePodcastListMobile(till, to, dto);
     }
 }

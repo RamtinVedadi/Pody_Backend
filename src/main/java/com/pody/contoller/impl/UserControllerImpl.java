@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = {"http://pody.ir", "http://www.pody.ir"}, maxAge = 3600)
+@CrossOrigin(origins = {"*", "http://pody.ir", "http://www.pody.ir"}, maxAge = 3600)
 public class UserControllerImpl implements UserController {
     @Autowired
     private UserManager userManager;
@@ -83,6 +83,11 @@ public class UserControllerImpl implements UserController {
     @Override
     public ResponseEntity userListSubscriptions(@PathVariable("id") UUID id) {
         return userManager.userListSubscriptions(id);
+    }
+
+    @Override
+    public ResponseEntity checkUserHasFollow(@RequestBody TwoIDRequestDto dto) {
+        return userManager.checkUserHasFollow(dto);
     }
 
 }

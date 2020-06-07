@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = {"http://pody.ir", "http://www.pody.ir"}, maxAge = 3600)
+@CrossOrigin(origins = {"*", "http://pody.ir", "http://www.pody.ir"}, maxAge = 3600)
 public class CategoryControllerImpl implements CategoryController {
 
     @Autowired
@@ -56,5 +56,10 @@ public class CategoryControllerImpl implements CategoryController {
     @Override
     public ResponseEntity listAllCategoryPage(@RequestBody IdResponseDto dto) {
         return categoryManager.listAllCategoryPage(dto);
+    }
+
+    @Override
+    public ResponseEntity readInfinite(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
+        return categoryManager.readInfinite(till, to, dto);
     }
 }

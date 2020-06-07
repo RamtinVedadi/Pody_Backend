@@ -1,5 +1,6 @@
 package com.pody.service.managers.impl;
 
+import com.pody.dto.repositories.PodcastCommentListDto;
 import com.pody.dto.responses.CommentListDto;
 import com.pody.model.Comment;
 import com.pody.model.CommentHashtag;
@@ -44,7 +45,8 @@ public class CommentManagerImpl implements CommentManager {
         try {
             if (comment != null) {
                 comment.setId(null);
-                comment.setIsApprove(false);
+                comment.setIsApprove(true);
+                comment.setCreatedDate(new Date());
                 Comment result = commentRepository.save(comment);
                 if (result.getDescription().contains("#")) {
                     String[] hashtags = result.getDescription().split("#");
@@ -62,7 +64,12 @@ public class CommentManagerImpl implements CommentManager {
                         commentHashtagRepository.save(ch);
                     }
                 }
-                return ResponseEntity.ok(result);
+                if (result != null) {
+                    PodcastCommentListDto commentResult = commentRepository.createCommentResult(result.getId());
+                    return ResponseEntity.ok(commentResult);
+                } else {
+                    return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
+                }
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
             }

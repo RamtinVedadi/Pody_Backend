@@ -12,4 +12,6 @@ public class LoginResultResponseDto {
     @JsonProperty("userTitle")
     public String title;
     public String profileImageAddress;
+    @JsonProperty("isChannel")
+    public boolean isChannel;
 }

@@ -49,4 +49,8 @@ public interface PodcastManager {
     ResponseEntity getAllDataWithOnlyRssUrl(StringRequestDto dto);
 
     ResponseEntity listFollowingPodcasts(int till, int to, IdResponseDto dto);
+
+    ResponseEntity homePagePodcastListMobile(int till, int to, IdResponseDto dto);
+
+    ResponseEntity podcastListenLaterList(int till, int to, IdResponseDto dto);
 }

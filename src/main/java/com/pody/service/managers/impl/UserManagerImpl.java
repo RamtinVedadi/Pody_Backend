@@ -355,4 +355,24 @@ public class UserManagerImpl implements UserManager {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public ResponseEntity checkUserHasFollow(TwoIDRequestDto dto) {
+        try {
+            //first id is for channel id
+            //second id is for logined user
+            if (dto != null) {
+                UserFollow isAvailable = userFollowRepository.isUserFollowAvailable(dto.getSecondID(), dto.getFirstID());
+                if (isAvailable != null) {
+                    return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                } else {
+                    return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
+                }
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

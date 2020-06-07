@@ -4,15 +4,17 @@ import java.util.UUID;
 
 public interface PodcastCommentListDto {
 
-    public UUID getCommentId();
+    UUID getCommentId();
 
-    public String getDescription();
+    String getDescription();
 
-    public UUID getUserId();
+    UUID getUserId();
 
-    public String getUserImage();
+    String getUserImage();
 
-    public String getUsername();
+    String getUsername();
 
-    public String getUserTitle();
+    String getUserTitle();
+
+    String getCreatedDate();
 }

@@ -37,4 +37,6 @@ public interface UserManager {
     ResponseEntity updateIsChannel(IdResponseDto dto);
 
     ResponseEntity userListSubscriptions(UUID id);
+
+    ResponseEntity checkUserHasFollow(TwoIDRequestDto dto);
 }

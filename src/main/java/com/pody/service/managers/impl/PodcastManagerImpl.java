@@ -485,6 +485,7 @@ public class PodcastManagerImpl implements PodcastManager {
                         listenLater.setId(null);
                         listenLater.setPodcast(dbPodcast);
                         listenLater.setUser(dbUser);
+                        listenLater.setCreatedDate(new Date());
                         ListenLater result = listenLaterRepository.save(listenLater);
                         if (result != null) {
                             return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
@@ -788,13 +789,18 @@ public class PodcastManagerImpl implements PodcastManager {
             hpld.setMostLiked(mostLiked);
             //Podcasts Suggestions
 //            if (dto.getId() == null) {
+//                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
+//                List<PodcastListDto> suggestions = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, orderBy)));
+//                hpld.setSuggestions(suggestions);
+//            } else {
+//                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
+//                List<PodcastListDto> suggestions = podcastRepository.listSuggestionsDate(previousDate, now, dto.getId(), PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, orderBy)));
+//                hpld.setSuggestions(suggestions);
+//            }
             String orderBy[] = {"createdDate", "viewCount", "likeCount"};
             List<PodcastListDto> suggestions = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, orderBy)));
             hpld.setSuggestions(suggestions);
-//            } else {
-//                List<PodcastListDto> suggestions = null;
-//                hpld.setSuggestions(suggestions);
-//            }
+
 
             //Following Podcasters New Episodes
             if (dto.getId() != null) {
@@ -803,7 +809,7 @@ public class PodcastManagerImpl implements PodcastManager {
                 Date lastMonth = date1.getTime();
                 Date today = new Date();
 
-                List<PodcastListDto> followingPodcasts = podcastRepository.listFollowingPodcasters(dto.getId(), lastMonth, today, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "createdDate")));
+                List<PodcastListDto> followingPodcasts = podcastRepository.listFollowingPodcastersDate(dto.getId(), lastMonth, today, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "createdDate")));
                 hpld.setFollowings(followingPodcasts);
             } else {
                 hpld.setFollowings(new ArrayList<>());
@@ -1151,6 +1157,100 @@ public class PodcastManagerImpl implements PodcastManager {
                 return ResponseEntity.ok(result);
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity homePagePodcastListMobile(int till, int to, IdResponseDto dto) {
+        try {
+            //default data of till and to is 0 and 20 in order
+            HomeMobileListDto hpld = new HomeMobileListDto();
+
+            //Categories section
+            List<Category> listParents = categoryRepository.listCategoryParents(Sort.by(Sort.Direction.ASC, "name"));
+            List<CategoryParentListDto> categories = listParents.stream().map(c -> modelMapper.map(c, CategoryParentListDto.class)).collect(Collectors.toList());
+            hpld.setCategories(categories);
+
+
+            //Podcasts section
+            List<PodcastListDto> listAllPodcasts = new ArrayList<>();
+            //Podcasts Suggestions
+            if (dto.getId() == null) {
+                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
+//                List<PodcastListDto> suggestions = podcastRepository.listMostViewedAndLiked(PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, orderBy)));
+                //but its not suggestions
+                List<PodcastListDto> suggestions = podcastRepository.listFollowingPodcasters(dto.getId(), PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, "createdDate")));
+                listAllPodcasts.addAll(suggestions);
+            }
+//            } else {
+//                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
+//                List<PodcastListDto> suggestions = podcastRepository.listSuggestions(dto.getId(), PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, orderBy)));
+//                listAllPodcasts.addAll(suggestions);
+//            }
+            //Podcasts added in last week
+            List<PodcastListDto> latestReleased = podcastRepository.listMostViewedAndLiked(PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, "createdDate")));
+            listAllPodcasts.addAll(latestReleased);
+            //Podcasts Most Viewed
+            List<PodcastListDto> mostViewed = podcastRepository.listMostViewedAndLiked(PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, "viewCount")));
+            listAllPodcasts.addAll(mostViewed);
+            //Podcasts Most Liked
+            List<PodcastListDto> mostLiked = podcastRepository.listMostViewedAndLiked(PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, "likeCount")));
+            listAllPodcasts.addAll(mostLiked);
+
+            List<PodcastListDto> finalList = listAllPodcasts.stream()
+                    .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
+                            ArrayList::new));
+
+            finalList = finalList.subList(0, 20);
+            hpld.setPartOnePodcasts(finalList.subList(0, 10));
+            hpld.setPartTwoPodcasts(finalList.subList(10, 20));
+
+            //News Section
+            if (dto.getId() == null) {
+                List<NewsListDto> listNews = newsRepository.listNewsMobile(PageRequest.of(till / 10, to / 10, Sort.by(Sort.Direction.DESC, "createdDate")));
+                hpld.setFirstNews(listNews.subList(0, 1));
+                hpld.setSecondNews(listNews.subList(1, 2));
+            } else {
+                List<NewsListDto> listNews = newsRepository.listNewsLoginedUserMobile(dto.getId(), PageRequest.of(till / 10, to / 10, Sort.by(Sort.Direction.DESC, "createdDate")));
+                if (listNews.size() == 0) {
+                    hpld.setFirstNews(null);
+                    hpld.setSecondNews(null);
+                } else if (listNews.size() == 1) {
+                    hpld.setFirstNews(listNews);
+                    hpld.setSecondNews(null);
+                } else {
+                    hpld.setFirstNews(listNews.subList(0, 1));
+                    hpld.setSecondNews(listNews.subList(1, 2));
+                }
+            }
+
+            //User Section
+            if (dto.getId() == null) {
+                List<ChannelsListDto> users = userRepository.listHomePageUsers(PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, "followerCount")));
+                hpld.setUsers(users);
+            } else {
+                List<ChannelsListDto> users = userRepository.listHomePageUsersLoginedUser(dto.getId(), PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, "followerCount")));
+                hpld.setUsers(users);
+            }
+
+            return ResponseEntity.ok(hpld);
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity podcastListenLaterList(int till, int to, IdResponseDto dto) {
+        try {
+            //default till , to must be 0 , 24
+            if (dto.getId() != null) {
+                List<PodcastListDto> result = listenLaterRepository.listenLaterList(dto.getId(), PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
+                return ResponseEntity.ok(result);
+            } else {
+                return ResponseEntity.ok(ErrorJsonHandler.EMPTY_BODY);
             }
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);

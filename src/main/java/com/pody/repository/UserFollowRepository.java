@@ -15,6 +15,6 @@ public interface UserFollowRepository extends AbstractRepository<UserFollow, UUI
     @Query("delete from UserFollow uf where uf.user.id = :userId and uf.follower.id = :followerId")
     int deleteFollowership(@Param("userId") UUID userid, @Param("followerId") UUID followerid);
 
-    @Query("select new UserFollow (uf.id) from UserFollow uf where uf.follower.id = :podcasterId and uf.user.id = :userId")
+    @Query("select uf.id from UserFollow uf where uf.follower.id = :podcasterId and uf.user.id = :userId")
     UserFollow isUserFollowAvailable(@Param("userId") UUID userId, @Param("podcasterId") UUID podcasterId);
 }

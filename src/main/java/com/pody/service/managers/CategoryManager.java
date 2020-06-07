@@ -23,4 +23,6 @@ public interface CategoryManager {
     ResponseEntity listChildren(UUID id);
 
     ResponseEntity listAllCategoryPage(IdResponseDto dto);
+
+    ResponseEntity readInfinite(int till, int to, IdResponseDto dto);
 }

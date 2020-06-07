@@ -239,6 +239,25 @@ public class CategoryManagerImpl implements CategoryManager {
         }
     }
 
+    @Override
+    public ResponseEntity readInfinite(int till, int to, IdResponseDto dto) {
+        try {
+            if (dto != null) {
+                if (dto.getId() != null) {
+                    List<PodcastListDto> categoryPodcasts = podcastRepository.listPodcastsEachCategory(dto.getId(), PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
+                    return ResponseEntity.ok(categoryPodcasts);
+                } else {
+                    return ResponseEntity.ok(ErrorJsonHandler.EMPTY_ID_FIELD);
+                }
+
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     private List<CategoryDto> findChildrenOf(CategoryDto categoryDto, List<Category> allCategories) {
         List<CategoryDto> categories = new ArrayList<>();
         for (Category cat : allCategories) {

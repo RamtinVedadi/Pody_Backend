@@ -57,4 +57,7 @@ public interface UserController {
 
     @GetMapping(value = UrlStringMapping.URL081, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity userListSubscriptions(UUID id);//input is logined user id
+
+    @PostMapping(value = UrlStringMapping.URL086, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity checkUserHasFollow(TwoIDRequestDto dto);
 }

@@ -19,6 +19,7 @@ public class UrlStringMapping {
     public static final String URL076 = "/api/user/list/channels";//Post
     public static final String URL078 = "/api/user/update/isChannel";//Put
     public static final String URL081 = "/api/user/list/subscriptions/{id}";//Get
+    public static final String URL086 = "/api/user/follow/check";//Post
     //search urls
     public static final String URL010 = "/api/search";//POST
     //podcast urls
@@ -35,6 +36,7 @@ public class UrlStringMapping {
     public static final String URL026 = "/api/podcast/list/suggested/{till}/{to}";//GET لیست پیشنهادی
     public static final String URL027 = "/api/podcast/list/new/{till}/{to}";//GET لیست جدیدترین
     public static final String URL028 = "/api/podcast/listenLater";//POST
+    public static final String URL087 = "/api/podcast/list/listenLater/{till}/{to}";//POST
     public static final String URL029 = "/api/podcast/{id}/history";//GET
     public static final String URL071 = "/api/podcast/list/{id}/history";//GET
     public static final String URL072 = "/api/podcast/rss";//POST
@@ -42,6 +44,7 @@ public class UrlStringMapping {
     public static final String URL077 = "/api/podcast/list/home";//Post
     public static final String URL082 = "/api/admin/podcast/rss";//Post
     public static final String URL083 = "/api/podcast/list/followings/{till}/{to}";//Post لیست پادکست پادکسترهای دنبال شده
+    public static final String URL085 = "/api/podcast/list/home/mobile/{till}/{to}";//Post
 
     //category urls
     public static final String URL030 = "/api/admin/category/create";//POST
@@ -52,6 +55,7 @@ public class UrlStringMapping {
     public static final String URL035 = "/api/category/list/{id}/children";//GET
     public static final String URL079 = "/api/category/read";//Post
     public static final String URL080 = "/api/category/list/page";//Post
+    public static final String URL084 = "/api/category/read/infinite/{till}/{to}";//Post
     //comment urls
     public static final String URL036 = "/api/comment/create";//POST
     public static final String URL037 = "/api/comment/update/{id}";//PUT

@@ -54,6 +54,9 @@ public interface PodcastController {
     @PostMapping(value = UrlStringMapping.URL028, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity addToListenLater(TwoIDRequestDto dto);
 
+    @PostMapping(value = UrlStringMapping.URL087, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity podcastListenLaterList(int till, int to, IdResponseDto dto);
+
     @GetMapping(value = UrlStringMapping.URL029, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity addToHistory(UUID id);
 
@@ -74,4 +77,7 @@ public interface PodcastController {
 
     @PostMapping(value = UrlStringMapping.URL083, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listFollowingPodcasts(int till, int to, IdResponseDto dto);
+
+    @PostMapping(value = UrlStringMapping.URL085, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity homePagePodcastListMobile(int till, int to, IdResponseDto dto);
 }

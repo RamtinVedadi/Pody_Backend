@@ -39,5 +39,7 @@ public interface CategoryController {
     @PostMapping(value = UrlStringMapping.URL080, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listAllCategoryPage(IdResponseDto dto);
 
+    @PostMapping(value = UrlStringMapping.URL084, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity readInfinite(int till, int to, IdResponseDto dto);
 
 }

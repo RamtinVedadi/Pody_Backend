@@ -58,8 +58,17 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
             " from Podcast p inner join User u on p.user.id = u.id " +
             " inner join UserFollow uf on p.user.id = uf.follower.id " +
+            " where uf.user.id = :userId ")
+    List<PodcastListDto> listFollowingPodcasters(@Param("userId") UUID userId, Pageable pageable);//One Month Data
+
+    @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
+            " p.viewCount as viewCount , p.likeCount as likeCount, p.duration as duration, u.id as userId," +
+            " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
+            " from Podcast p inner join User u on p.user.id = u.id " +
+            " inner join UserFollow uf on p.user.id = uf.follower.id " +
             " where uf.user.id = :userId and p.createdDate between :lastMonth and :today ")
-    List<PodcastListDto> listFollowingPodcasters(@Param("userId") UUID userId, @Param("lastMonth") Date lastMonth, @Param("today") Date today, Pageable pageable);//One Month Data
+    List<PodcastListDto> listFollowingPodcastersDate(@Param("userId") UUID userId, @Param("lastMonth") Date lastMonth, @Param("today") Date today, Pageable pageable);//One Month Data
 
     @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
             " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
@@ -81,9 +90,10 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
     List<PodcastListDto> listPodcastsEachCategory(@Param("categoryId") UUID categoryId, Pageable pageable);
 
     @Query("select distinct p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
-            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.description as description, c.id as categoryId," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.description as description," +
             " p.createdDate as createdDate, p.duration as duration, p.viewCount as viewCount , p.likeCount as likeCount," +
-            " u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress " +
+            " u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress," +
+            " c.id as categoryId, c.name as categoryName, c.imageAddress as categoryIcon" +
             " from Podcast p inner join User u on p.user.id = u.id " +
             " inner join PodcastCategory pc on p.id = pc.podcast.id " +
             " inner join Category c on pc.category.id = c.id " +
@@ -113,6 +123,26 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " p.likeCount as likeCount, u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
             " from Podcast p inner join User u on p.user.id = u.id ")
     List<PodcastListDto> listMostViewedAndLiked(Pageable pageable);
+
+    @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.duration as duration, p.viewCount as viewCount," +
+            " p.likeCount as likeCount, u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
+            " from Podcast p inner join User u on p.user.id = u.id " +
+            " left outer join CategoryFollow cf on u.id = cf.follower.id " +
+            " left outer join UserFollow uf on u.id = uf.user.id " +
+            " left outer join ListenLater ll on u.id = ll.user.id " +
+            " where p.createdDate between :lastWeek and :today and u.id = :userId")
+    List<PodcastListDto> listSuggestionsDate(@Param("lastWeek") Date lastWeek, @Param("today") Date today, @Param("userId") UUID userId, Pageable pageable);
+
+    @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.duration as duration, p.viewCount as viewCount," +
+            " p.likeCount as likeCount, u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
+            " from Podcast p inner join User u on p.user.id = u.id " +
+            " left outer join CategoryFollow cf on u.id = cf.follower.id " +
+            " left outer join UserFollow uf on u.id = uf.user.id " +
+            " left outer join ListenLater ll on u.id = ll.user.id " +
+            " where u.id = :userId")
+    List<PodcastListDto> listSuggestions(@Param("userId") UUID userId, Pageable pageable);
 
     @Query("select distinct p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
             " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
