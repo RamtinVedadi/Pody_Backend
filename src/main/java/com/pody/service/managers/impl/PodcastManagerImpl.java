@@ -1213,8 +1213,16 @@ public class PodcastManagerImpl implements PodcastManager {
             //News Section
             if (dto.getId() == null) {
                 List<NewsListDto> listNews = newsRepository.listNewsMobile(PageRequest.of(till / 10, to / 10, Sort.by(Sort.Direction.DESC, "createdDate")));
-                hpld.setFirstNews(listNews.subList(0, 1));
-                hpld.setSecondNews(listNews.subList(1, 2));
+                if (listNews.size() == 0) {
+                    hpld.setFirstNews(null);
+                    hpld.setSecondNews(null);
+                } else if (listNews.size() == 1) {
+                    hpld.setFirstNews(listNews);
+                    hpld.setSecondNews(null);
+                } else {
+                    hpld.setFirstNews(listNews.subList(0, 1));
+                    hpld.setSecondNews(listNews.subList(1, 2));
+                }
             } else {
                 List<NewsListDto> listNews = newsRepository.listNewsLoginedUserMobile(dto.getId(), PageRequest.of(till / 10, to / 10, Sort.by(Sort.Direction.DESC, "createdDate")));
                 if (listNews.size() == 0) {
