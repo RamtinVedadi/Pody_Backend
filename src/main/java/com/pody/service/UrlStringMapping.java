@@ -30,13 +30,15 @@ public class UrlStringMapping {
     public static final String URL019 = "/api/podcast/{id}/upload";//POST
     public static final String URL021 = "/api/podcast/view/{id}";//GET
     public static final String URL022 = "/api/podcast/like/{id}";//GET
-    public static final String URL023 = "/api/podcast/list/{id}/user";//GET
+    public static final String URL023 = "/api/podcast/list/{id}/user/{till}/{to}";//GET
     public static final String URL024 = "/api/podcast/list/like/{till}/{to}";//GET لیست محبوب ترین ها
     public static final String URL025 = "/api/podcast/list/view/{till}/{to}";//GET لیست پر بازدید ترین ها
     public static final String URL026 = "/api/podcast/list/suggested/{till}/{to}";//GET لیست پیشنهادی
     public static final String URL027 = "/api/podcast/list/new/{till}/{to}";//GET لیست جدیدترین
     public static final String URL028 = "/api/podcast/listenLater";//POST
     public static final String URL087 = "/api/podcast/list/listenLater/{till}/{to}";//POST
+    public static final String URL088 = "/api/podcast/listenLater/check";//POST
+    public static final String URL089 = "/api/podcast/listenLater/delete";//DELETE
     public static final String URL029 = "/api/podcast/{id}/history";//GET
     public static final String URL071 = "/api/podcast/list/{id}/history";//GET
     public static final String URL072 = "/api/podcast/rss";//POST

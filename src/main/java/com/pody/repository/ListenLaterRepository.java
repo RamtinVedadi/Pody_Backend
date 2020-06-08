@@ -3,6 +3,7 @@ package com.pody.repository;
 import com.pody.dto.repositories.PodcastListDto;
 import com.pody.model.ListenLater;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,11 @@ public interface ListenLaterRepository extends AbstractRepository<ListenLater, U
             " inner join ListenLater ll on p.id = ll.podcast.id " +
             " where ll.user.id = :userId")
     List<PodcastListDto> listenLaterList(@Param("userId") UUID userId, Pageable pageable);
+
+    @Query("select new ListenLater (ll.id) from ListenLater ll where ll.user.id = :userId and ll.podcast.id = :podcastId")
+    ListenLater checkIsListenLater(@Param("userId") UUID userId, @Param("podcastId") UUID podcastId);
+
+    @Modifying
+    @Query("delete from ListenLater ll where ll.user.id = :userId and ll.podcast.id = :podcastId")
+    int deleteListenLater(@Param("userId") UUID userId, @Param("podcastId") UUID podcastId);
 }

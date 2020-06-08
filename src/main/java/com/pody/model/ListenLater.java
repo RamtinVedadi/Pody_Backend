@@ -31,4 +31,8 @@ public class ListenLater {
 
     @Column
     private Date createdDate;
+
+    public ListenLater(UUID id) {
+        this.id = id;
+    }
 }

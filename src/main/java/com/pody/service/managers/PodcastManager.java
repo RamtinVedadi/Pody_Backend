@@ -28,7 +28,7 @@ public interface PodcastManager {
 
     ResponseEntity updateDisLikeCount(UUID podcastId);
 
-    ResponseEntity listPodcastsEachUser(UUID userId);
+    ResponseEntity listPodcastsEachUser(UUID userId, int till, int to);
 
     ResponseEntity listPodcastsMostLiked(int till, int to);
 
@@ -53,4 +53,8 @@ public interface PodcastManager {
     ResponseEntity homePagePodcastListMobile(int till, int to, IdResponseDto dto);
 
     ResponseEntity podcastListenLaterList(int till, int to, IdResponseDto dto);
+
+    ResponseEntity podcastListenLaterCheck(TwoIDRequestDto dto);
+
+    ResponseEntity podcastListenLaterDelete(TwoIDRequestDto dto);
 }

@@ -37,7 +37,7 @@ public interface PodcastController {
     ResponseEntity updateLikeCount(UUID podcastId);
 
     @GetMapping(value = UrlStringMapping.URL023, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity listPodcastsEachUser(UUID userId);
+    ResponseEntity listPodcastsEachUser(UUID userId, int till, int to);
 
     @GetMapping(value = UrlStringMapping.URL024, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listPodcastsMostLiked(int till, int to);
@@ -56,6 +56,12 @@ public interface PodcastController {
 
     @PostMapping(value = UrlStringMapping.URL087, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity podcastListenLaterList(int till, int to, IdResponseDto dto);
+
+    @PostMapping(value = UrlStringMapping.URL088, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity podcastListenLaterCheck(TwoIDRequestDto dto);
+
+    @DeleteMapping(value = UrlStringMapping.URL089, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity podcastListenLaterDelete(TwoIDRequestDto dto);
 
     @GetMapping(value = UrlStringMapping.URL029, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity addToHistory(UUID id);

@@ -412,10 +412,12 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override //Tested
-    public ResponseEntity listPodcastsEachUser(UUID userId) {
+    public ResponseEntity listPodcastsEachUser(UUID userId, int till, int to) {
         try {
+            //this id is for logined user id which is podcasters id
+            // default till is 0 and to is 20
             if (userId != null) {
-                List<PodcastListDto> listPodcastUser = podcastRepository.listPodcastEachUser(userId, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
+                List<PodcastListDto> listPodcastUser = podcastRepository.listPodcastEachUser(userId, PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
                 return ResponseEntity.ok(listPodcastUser);
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
@@ -1251,6 +1253,45 @@ public class PodcastManagerImpl implements PodcastManager {
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.ok(ErrorJsonHandler.EMPTY_BODY);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity podcastListenLaterCheck(TwoIDRequestDto dto) {
+        try {
+            //First id is for logined User id
+            //Second id is for podcast id
+            if (dto != null) {
+                ListenLater result = listenLaterRepository.checkIsListenLater(dto.getFirstID(), dto.getSecondID());
+                if (result != null) {
+                    return ResponseEntity.ok(ErrorJsonHandler.TRUE);
+                } else {
+                    return ResponseEntity.ok(ErrorJsonHandler.FALSE);
+                }
+            } else {
+                return ResponseEntity.ok(ErrorJsonHandler.EMPTY_BODY);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity podcastListenLaterDelete(TwoIDRequestDto dto) {
+        try {
+            //first id is for logined User and second id is for podcast id
+            if (dto.getFirstID() != null && dto.getSecondID() != null) {
+                int result = listenLaterRepository.deleteListenLater(dto.getFirstID(), dto.getSecondID());
+                if (result == 1) {
+                    return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                } else {
+                    return ResponseEntity.ok("NOT SUCCESSFUL");
+                }
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
             }
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);

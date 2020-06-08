@@ -57,7 +57,7 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity listPodcastsEachUser(@PathVariable("id") UUID userId) {
+    public ResponseEntity listPodcastsEachUser(@PathVariable("id") UUID userId, @PathVariable int till, @PathVariable int to) {
         return podcastManager.listPodcastsEachUser(userId);
     }
 
@@ -89,6 +89,16 @@ public class PodcastControllerImpl implements PodcastController {
     @Override
     public ResponseEntity podcastListenLaterList(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
         return podcastManager.podcastListenLaterList(till, to, dto);
+    }
+
+    @Override
+    public ResponseEntity podcastListenLaterCheck(@RequestBody TwoIDRequestDto dto) {
+        return podcastManager.podcastListenLaterCheck(dto);
+    }
+
+    @Override
+    public ResponseEntity podcastListenLaterDelete(@RequestBody TwoIDRequestDto dto) {
+        return podcastManager.podcastListenLaterDelete(dto);
     }
 
     @Override

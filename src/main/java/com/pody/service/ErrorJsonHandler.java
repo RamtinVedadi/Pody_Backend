@@ -9,6 +9,8 @@ public class ErrorJsonHandler {
     public static final String EMPTY_FILE = "{\"message\":\"EMPTY_FILE\"}";
     public static final String NOT_SUCCESSFUL = "{\"message\":\"NOT_SUCCESSFUL\"}";
     public static final String SUCCESSFUL = "{\"message\":\"SUCCESSFUL\"}";
+    public static final String TRUE = "{\"message\":\"TRUE\"}";
+    public static final String FALSE = "{\"message\":\"FALSE\"}";
     public static final String DUPLICATE_EMAIL = "{\"message\":\"DUPLICATE_EMAIL\"}";
     public static final String DUPLICATE_USERNAME = "{\"message\":\"DUPLICATE_USERNAME\"}";
     public static final String OK_EMAIL = "{\"message\":\"OK_EMAIL\"}";
