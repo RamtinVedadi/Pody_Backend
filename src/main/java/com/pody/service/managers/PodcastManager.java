@@ -50,11 +50,13 @@ public interface PodcastManager {
 
     ResponseEntity listFollowingPodcasts(int till, int to, IdResponseDto dto);
 
-    ResponseEntity homePagePodcastListMobile(int till, int to, IdResponseDto dto);
+    ResponseEntity homePagePodcastListMobile(IdResponseDto dto);
 
     ResponseEntity podcastListenLaterList(int till, int to, IdResponseDto dto);
 
     ResponseEntity podcastListenLaterCheck(TwoIDRequestDto dto);
 
     ResponseEntity podcastListenLaterDelete(TwoIDRequestDto dto);
+
+    ResponseEntity homePagePodcastListMobileInfinite(int till, int to, IdResponseDto dto);
 }

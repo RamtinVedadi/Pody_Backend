@@ -177,4 +177,6 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
     int updateAudioAddress(@Param("audioPath") String audioPath, @Param("id") UUID id);
 
     Podcast findOneByTitleAndUser(String title, User user);
+
+    List<Podcast> findPodcastsByTitleAndUser(String title, User user);
 }

@@ -106,7 +106,7 @@ public class RssUpdateScheduling {
 
                                 //Title
                                 String podcastTitle = eElement.getElementsByTagName("title").item(0).getTextContent();
-                                Podcast pTitle = podcastRepository.findOneByTitleAndUser(podcastTitle, podcasterDetail);
+                                List<Podcast> pTitle = podcastRepository.findPodcastsByTitleAndUser(podcastTitle, podcasterDetail);
                                 if (pTitle == null) {
                                     podcast.setTitle(podcastTitle);
                                 } else {

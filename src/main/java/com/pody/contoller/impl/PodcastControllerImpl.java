@@ -58,7 +58,7 @@ public class PodcastControllerImpl implements PodcastController {
 
     @Override
     public ResponseEntity listPodcastsEachUser(@PathVariable("id") UUID userId, @PathVariable int till, @PathVariable int to) {
-        return podcastManager.listPodcastsEachUser(userId , till , to);
+        return podcastManager.listPodcastsEachUser(userId, till, to);
     }
 
     @Override
@@ -137,7 +137,12 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity homePagePodcastListMobile(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
-        return podcastManager.homePagePodcastListMobile(till, to, dto);
+    public ResponseEntity homePagePodcastListMobile(@RequestBody IdResponseDto dto) {
+        return podcastManager.homePagePodcastListMobile(dto);
+    }
+
+    @Override
+    public ResponseEntity homePagePodcastListMobileInfinite(int till, int to, IdResponseDto dto) {
+        return podcastManager.homePagePodcastListMobileInfinite(till, to, dto);
     }
 }

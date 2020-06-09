@@ -72,7 +72,7 @@ public class User extends AbstractModelUser {
     private String language = "";
 
     @Column
-    private String channelImage = "http://localhost/userPageImage/default.jpg";//image of channel page top for v-parallax
+    private String channelImage = "http://pody.ir/defaultImages/default.jpg";//image of channel page top for v-parallax
 
     @Column
     private Boolean isChannel = false;

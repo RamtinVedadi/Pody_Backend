@@ -96,6 +96,10 @@ public interface UserRepository extends AbstractRepository<User, UUID> {
             " from User u inner join UserFollow uf on u.id = uf.follower.id where uf.user.id = :userId")
     List<ChannelsListDto> listFollowingChannels(@Param("userId") UUID userId, Pageable pageable);
 
+    @Query("select u.id as id, u.username as username, u.title as userTitle, u.profileImageAddress as imageAddress, u.followerCount as followCount, u.bio as userBio" +
+            " from User u inner join UserFollow uf on u.id = uf.follower.id where uf.user.id = :userId")
+    List<ChannelsListDto> listFollowingChannelsSideNav(@Param("userId") UUID userId);
+
     @Query("select u.id as id, u.username as username, u.profileImageAddress as imageAddress, u.followerCount as followCount ," +
             " case when uf.id is null  THEN 'False' ELSE 'True' END AS hasFollowed " +
             " from User u inner join UserFollow uf on u.id = uf.follower.id where u.id = :userId")

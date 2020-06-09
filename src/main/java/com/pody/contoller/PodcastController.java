@@ -85,5 +85,8 @@ public interface PodcastController {
     ResponseEntity listFollowingPodcasts(int till, int to, IdResponseDto dto);
 
     @PostMapping(value = UrlStringMapping.URL085, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity homePagePodcastListMobile(int till, int to, IdResponseDto dto);
+    ResponseEntity homePagePodcastListMobile(IdResponseDto dto);
+
+    @PostMapping(value = UrlStringMapping.URL091, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity homePagePodcastListMobileInfinite(int till, int to, IdResponseDto dto);
 }
