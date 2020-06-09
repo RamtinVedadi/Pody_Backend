@@ -39,4 +39,6 @@ public interface UserManager {
     ResponseEntity userListSubscriptions(UUID id);
 
     ResponseEntity checkUserHasFollow(TwoIDRequestDto dto);
+
+    ResponseEntity userListSubscriptionsSideNav(UUID id);
 }

@@ -75,10 +75,10 @@ public class UserManagerImpl implements UserManager {
                 User userInfo = userRepository.findOneById(dto.getFirstID());
                 urrd.setUserInfo(userInfo);
 
-                List<PodcastListDto> userPodcasts = podcastRepository.listPodcastEachUser(dto.getFirstID(), PageRequest.of(0, 24, Sort.by(Sort.Direction.DESC, "createdDate")));
+                List<PodcastListDto> userPodcasts = podcastRepository.listPodcastEachUser(dto.getFirstID(), PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdDate")));
                 urrd.setUserPodcasts(userPodcasts);
 
-                List<NewsListDto> userNews = newsRepository.listNewsEachUser(dto.getFirstID(), PageRequest.of(0, 24, Sort.by(Sort.Direction.DESC, "createdDate")));
+                List<NewsListDto> userNews = newsRepository.listNewsEachUser(dto.getFirstID(), PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdDate")));
                 urrd.setUserNews(userNews);
 
                 if (dto.getSecondID() == null) {
@@ -368,6 +368,22 @@ public class UserManagerImpl implements UserManager {
                 } else {
                     return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
                 }
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity userListSubscriptionsSideNav(UUID id) {
+        //This is logined user id
+        try {
+            if (id != null) {
+                List<ChannelsListDto> listFollowings = userRepository.listFollowingChannelsSideNav(id);
+
+                return ResponseEntity.ok(listFollowings);
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
             }

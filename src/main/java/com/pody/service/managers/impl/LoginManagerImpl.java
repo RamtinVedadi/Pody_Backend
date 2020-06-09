@@ -51,7 +51,7 @@ public class LoginManagerImpl implements LoginManager {
                 u.setAddress(null);
                 u.setRssUrl(u.getRssUrl());
                 if (u.getProfileImageAddress() == null || u.getProfileImageAddress() == "") {
-                    u.setProfileImageAddress("http://192.168.100.10/profileImages/profile.png");
+                    u.setProfileImageAddress("http://pody.ir/defaultImages/profile.png");
                 } else {
                     u.setProfileImageAddress(u.getProfileImageAddress());
                 }
@@ -79,7 +79,8 @@ public class LoginManagerImpl implements LoginManager {
 
                 u.setPassword(hashedPassword);
 
-                User result = userRepository.save(u);
+                User registeredUser = userRepository.save(u);
+                LoginResultResponseDto result = modelMapper.map(registeredUser, LoginResultResponseDto.class);
 
                 return ResponseEntity.ok(result);
             } else {

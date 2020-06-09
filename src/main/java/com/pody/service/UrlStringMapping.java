@@ -19,6 +19,7 @@ public class UrlStringMapping {
     public static final String URL076 = "/api/user/list/channels";//Post
     public static final String URL078 = "/api/user/update/isChannel";//Put
     public static final String URL081 = "/api/user/list/subscriptions/{id}";//Get
+    public static final String URL090 = "/api/user/list/subscriptions/sidenav/{id}";//Get
     public static final String URL086 = "/api/user/follow/check";//Post
     //search urls
     public static final String URL010 = "/api/search";//POST
@@ -46,7 +47,8 @@ public class UrlStringMapping {
     public static final String URL077 = "/api/podcast/list/home";//Post
     public static final String URL082 = "/api/admin/podcast/rss";//Post
     public static final String URL083 = "/api/podcast/list/followings/{till}/{to}";//Post لیست پادکست پادکسترهای دنبال شده
-    public static final String URL085 = "/api/podcast/list/home/mobile/{till}/{to}";//Post
+    public static final String URL085 = "/api/podcast/list/home/mobile";//Post
+    public static final String URL091 = "/api/podcast/list/home/mobile/infinite/{till}/{to}";//Post
 
     //category urls
     public static final String URL030 = "/api/admin/category/create";//POST

@@ -86,6 +86,11 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
+    public ResponseEntity userListSubscriptionsSideNav(@PathVariable("id") UUID id) {
+        return userManager.userListSubscriptionsSideNav(id);
+    }
+
+    @Override
     public ResponseEntity checkUserHasFollow(@RequestBody TwoIDRequestDto dto) {
         return userManager.checkUserHasFollow(dto);
     }
