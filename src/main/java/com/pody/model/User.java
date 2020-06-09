@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table
@@ -78,6 +77,8 @@ public class User extends AbstractModelUser {
     @Column
     private Boolean isChannel = false;
 
+    public User() {
+    }
 
     public User(UUID id) {
         this.setId(id);

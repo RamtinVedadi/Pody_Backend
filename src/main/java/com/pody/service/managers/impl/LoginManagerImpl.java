@@ -79,7 +79,9 @@ public class LoginManagerImpl implements LoginManager {
 
                 u.setPassword(hashedPassword);
 
-                User result = userRepository.save(u);
+                User registeredUser = userRepository.save(u);
+
+                LoginResultResponseDto result = modelMapper.map(registeredUser, LoginResultResponseDto.class);
 
                 return ResponseEntity.ok(result);
             } else {

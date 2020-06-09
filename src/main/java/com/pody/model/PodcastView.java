@@ -10,7 +10,6 @@ import java.util.UUID;
 //this class is for each podcast daily view count
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table
@@ -32,5 +31,8 @@ public class PodcastView {
 
     public PodcastView(UUID id) {
         this.id = id;
+    }
+
+    public PodcastView() {
     }
 }
