@@ -872,8 +872,13 @@ public class PodcastManagerImpl implements PodcastManager {
                                         username += splited[j];
                                     }
                                 }
-                                username = username.replaceAll("([/.@#$%^&*()<>|-])", "");
-                                creatingUser.setUsername(username);
+                                username = username.replaceAll("([/.@#$%^&*()<>|\\-])", "");
+                                User isUserAvailable = userRepository.findOneByUsername(username);
+                                if (isUserAvailable == null) {
+                                    creatingUser.setUsername(username);
+                                } else {
+                                    return ResponseEntity.ok(ErrorJsonHandler.DUPLICATE_USERNAME);
+                                }
                             }
                         } catch (NullPointerException e) {
                             creatingUser.setTitle("");
@@ -1112,7 +1117,6 @@ public class PodcastManagerImpl implements PodcastManager {
                                 podcast.setEpisodeNumber(null);
                             }
 
-
                             podcast.setUser(podcasterDetail);
 
                             userPodcasts.add(podcast);
@@ -1258,7 +1262,11 @@ public class PodcastManagerImpl implements PodcastManager {
             //default till , to must be 0 , 24
             if (dto.getId() != null) {
                 List<PodcastListDto> result = listenLaterRepository.listenLaterList(dto.getId(), PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
-                return ResponseEntity.ok(result);
+
+                List<PodcastListDto> finalList = result.stream()
+                        .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
+                                ArrayList::new));
+                return ResponseEntity.ok(finalList);
             } else {
                 return ResponseEntity.ok(ErrorJsonHandler.EMPTY_BODY);
             }
@@ -1380,7 +1388,7 @@ public class PodcastManagerImpl implements PodcastManager {
                 List<ChannelsListDto> users = userRepository.listHomePageUsers(PageRequest.of(till, to / 2, Sort.by(Sort.Direction.DESC, "followerCount")));
                 hpld.setUsers(users);
             } else {
-                List<ChannelsListDto> users = userRepository.listHomePageUsersLoginedUser(dto.getId(), PageRequest.of(till, to / 2  , Sort.by(Sort.Direction.DESC, "followerCount")));
+                List<ChannelsListDto> users = userRepository.listHomePageUsersLoginedUser(dto.getId(), PageRequest.of(till, to / 2, Sort.by(Sort.Direction.DESC, "followerCount")));
                 hpld.setUsers(users);
             }
 

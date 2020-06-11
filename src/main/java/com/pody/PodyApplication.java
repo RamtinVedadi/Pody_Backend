@@ -43,7 +43,7 @@ public class PodyApplication extends SpringBootServletInitializer implements App
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://pody.ir")
+                        .allowedOrigins("http://pody.ir","*")
                         .allowedMethods("GET", "POST", "DELETE", "PUT")
                         .allowCredentials(false);
             }
