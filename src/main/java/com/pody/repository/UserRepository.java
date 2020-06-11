@@ -76,7 +76,6 @@ public interface UserRepository extends AbstractRepository<User, UUID> {
     @Query("update User u set u.followingCount  = u.followingCount  - 1 where u.id = :id")
     int updateUnFollowingCount(@Param("id") UUID id);//count when user is unfollowing some one
 
-
     @Modifying
     @Query("update User u set u.isChannel = true where u.id = :id")
     int updateIsChannel(@Param("id") UUID id);
