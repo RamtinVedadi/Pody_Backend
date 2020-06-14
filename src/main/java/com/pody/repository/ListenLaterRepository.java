@@ -22,7 +22,7 @@ public interface ListenLaterRepository extends AbstractRepository<ListenLater, U
     List<PodcastListDto> listenLaterList(@Param("userId") UUID userId, Pageable pageable);
 
     @Query("select new ListenLater (ll.id) from ListenLater ll where ll.user.id = :userId and ll.podcast.id = :podcastId")
-    ListenLater checkIsListenLater(@Param("userId") UUID userId, @Param("podcastId") UUID podcastId);
+    List<ListenLater> checkIsListenLater(@Param("userId") UUID userId, @Param("podcastId") UUID podcastId);
 
     @Modifying
     @Query("delete from ListenLater ll where ll.user.id = :userId and ll.podcast.id = :podcastId")

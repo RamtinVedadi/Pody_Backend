@@ -26,7 +26,7 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
     int updateLikesCount(@Param("id") UUID id);
 
     @Modifying
-    @Query("update Podcast p set p.disLikeCount= p.disLikeCount + 1 where p.id = :id")
+    @Query("update Podcast p set p.likeCount= p.likeCount - 1 where p.id = :id")
     int updateDisLikesCount(@Param("id") UUID id);
 
     @Modifying

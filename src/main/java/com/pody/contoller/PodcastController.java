@@ -33,8 +33,17 @@ public interface PodcastController {
     @GetMapping(value = UrlStringMapping.URL021, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity updateViewCount(UUID podcastId);
 
-    @GetMapping(value = UrlStringMapping.URL022, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity updateLikeCount(UUID podcastId);
+    @PostMapping(value = UrlStringMapping.URL022, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity updateLikeCount(TwoIDRequestDto dto);
+
+    @PostMapping(value = UrlStringMapping.URL092, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity updateDisLikeCount(TwoIDRequestDto dto);
+
+    @PostMapping(value = UrlStringMapping.URL093, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity userLikeCheck(TwoIDRequestDto dto);
+
+    @GetMapping(value = UrlStringMapping.URL095, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity listLikedPodcastsEachUser(UUID userId, int till, int to);
 
     @GetMapping(value = UrlStringMapping.URL023, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listPodcastsEachUser(UUID userId, int till, int to);

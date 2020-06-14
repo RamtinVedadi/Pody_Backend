@@ -11,7 +11,7 @@ public class UrlStringMapping {
     public static final String URL005 = "/api/user/delete/{id}";//DELETE
     public static final String URL006 = "/api/user/premium/{id}";//GET
     public static final String URL007 = "/api/user/{id}/image";//POST
-    public static final String URL0077 = "/api/user/{id}/channelImage";//POST
+    public static final String URL094 = "/api/user/{id}/channelImage";//POST
     public static final String URL008 = "/api/user/check/email";//POST
     public static final String URL009 = "/api/user/check/username";//POST
     public static final String URL073 = "/api/user/resetPassword";//POST
@@ -30,7 +30,10 @@ public class UrlStringMapping {
     public static final String URL018 = "/api/podcast/delete/{id}";//DELETE
     public static final String URL019 = "/api/podcast/{id}/upload";//POST
     public static final String URL021 = "/api/podcast/view/{id}";//GET
-    public static final String URL022 = "/api/podcast/like/{id}";//GET
+    public static final String URL022 = "/api/podcast/like";//POST
+    public static final String URL092 = "/api/podcast/dislike";//POST
+    public static final String URL093 = "/api/podcast/like/check";//POST
+    public static final String URL095 = "/api/podcast/list/like/{id}/user/{till}/{to}";//GET
     public static final String URL023 = "/api/podcast/list/{id}/user/{till}/{to}";//GET
     public static final String URL024 = "/api/podcast/list/like/{till}/{to}";//GET لیست محبوب ترین ها
     public static final String URL025 = "/api/podcast/list/view/{till}/{to}";//GET لیست پر بازدید ترین ها
