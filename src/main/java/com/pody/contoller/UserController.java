@@ -34,7 +34,7 @@ public interface UserController {
     @PostMapping(value = UrlStringMapping.URL007, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity uploadProfileImage(MultipartFile image, UUID id);
 
-    @PostMapping(value = UrlStringMapping.URL0077, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = UrlStringMapping.URL094, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity uploadChannelImage(MultipartFile image, UUID id);
 
     @PostMapping(value = UrlStringMapping.URL008, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)

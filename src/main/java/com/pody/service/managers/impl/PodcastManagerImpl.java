@@ -57,6 +57,7 @@ public class PodcastManagerImpl implements PodcastManager {
     private UserCategoryRespository userCategoryRespository;
     private ListenLaterRepository listenLaterRepository;
     private PodcastViewRepository podcastViewRepository;
+    private PodcastLikeRepository podcastLikeRepository;
     private CategoryRepository categoryRepository;
     private PodcastRepository podcastRepository;
     private HashtagRepository hashtagRepository;
@@ -69,7 +70,7 @@ public class PodcastManagerImpl implements PodcastManager {
     @Autowired
     public PodcastManagerImpl(PodcastCategoryRepository podcastCategoryRepository, PodcastHashtagRepository podcastHashtagRepository,
                               UserCategoryRespository userCategoryRespository, ListenLaterRepository listenLaterRepository,
-                              PodcastViewRepository podcastViewRepository, CategoryRepository categoryRepository,
+                              PodcastViewRepository podcastViewRepository, PodcastLikeRepository podcastLikeRepository, CategoryRepository categoryRepository,
                               PodcastRepository podcastRepository, HashtagRepository hashtagRepository,
                               HistoryRepository historyRepository, CommentRepository commentRepository, NewsRepository newsRepository,
                               UserRepository userRepository, ModelMapper modelMapper) {
@@ -78,6 +79,7 @@ public class PodcastManagerImpl implements PodcastManager {
         this.userCategoryRespository = userCategoryRespository;
         this.listenLaterRepository = listenLaterRepository;
         this.podcastViewRepository = podcastViewRepository;
+        this.podcastLikeRepository = podcastLikeRepository;
         this.categoryRepository = categoryRepository;
         this.podcastRepository = podcastRepository;
         this.hashtagRepository = hashtagRepository;
@@ -376,17 +378,29 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override //Tested
-    public ResponseEntity updateLikeCount(UUID podcastId) {
+    public ResponseEntity updateLikeCount(TwoIDRequestDto dto) {
         try {
-            if (podcastId != null) {
-                int result = podcastRepository.updateLikesCount(podcastId);
+            //first id is for podcast id
+            //second id is for user id
+            if (dto != null) {
+                int result = podcastRepository.updateLikesCount(dto.getFirstID());
                 if (result == 1) {
-                    return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                    PodcastLike pl = new PodcastLike();
+                    pl.setId(null);
+                    pl.setCreatedDate(new Date());
+                    pl.setPodcast(new Podcast(dto.getFirstID()));
+                    pl.setUser(new User(dto.getSecondID()));
+                    PodcastLike podcastLike = podcastLikeRepository.save(pl);
+                    if (podcastLike != null) {
+                        return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                    } else {
+                        return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
+                    }
                 } else {
                     return new ResponseEntity(ErrorJsonHandler.NOT_SUCCESSFUL, HttpStatus.BAD_REQUEST);
                 }
             } else {
-                return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
             }
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -394,17 +408,44 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override //Tested
-    public ResponseEntity updateDisLikeCount(UUID podcastId) {
+    public ResponseEntity updateDisLikeCount(TwoIDRequestDto dto) {
         try {
-            if (podcastId != null) {
-                int result = podcastRepository.updateDisLikesCount(podcastId);
+            //first id is for podcast id
+            //second id is for user id
+            if (dto != null) {
+                int result = podcastRepository.updateDisLikesCount(dto.getFirstID());
                 if (result == 1) {
-                    return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                    int deleteResult = podcastLikeRepository.deletePodcastLike(dto.getFirstID(), dto.getSecondID());
+                    if (deleteResult == 1) {
+                        return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                    } else {
+                        return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
+                    }
                 } else {
                     return new ResponseEntity(ErrorJsonHandler.NOT_SUCCESSFUL, HttpStatus.BAD_REQUEST);
                 }
             } else {
-                return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity userLikeCheck(TwoIDRequestDto dto) {
+        try {
+            //First id is for podcast id
+            //Second id is for logined user id
+            if (dto != null) {
+                List<PodcastLike> result = podcastLikeRepository.checkIsLike(dto.getSecondID(), dto.getFirstID());
+                if (result != null && result.size() > 0) {
+                    return ResponseEntity.ok(ErrorJsonHandler.TRUE);
+                } else {
+                    return ResponseEntity.ok(ErrorJsonHandler.FALSE);
+                }
+            } else {
+                return ResponseEntity.ok(ErrorJsonHandler.EMPTY_BODY);
             }
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -1281,8 +1322,8 @@ public class PodcastManagerImpl implements PodcastManager {
             //First id is for logined User id
             //Second id is for podcast id
             if (dto != null) {
-                ListenLater result = listenLaterRepository.checkIsListenLater(dto.getFirstID(), dto.getSecondID());
-                if (result != null) {
+                List<ListenLater> result = listenLaterRepository.checkIsListenLater(dto.getFirstID(), dto.getSecondID());
+                if (result != null && result.size() > 0) {
                     return ResponseEntity.ok(ErrorJsonHandler.TRUE);
                 } else {
                     return ResponseEntity.ok(ErrorJsonHandler.FALSE);

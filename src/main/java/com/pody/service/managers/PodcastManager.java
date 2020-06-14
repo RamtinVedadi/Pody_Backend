@@ -24,9 +24,11 @@ public interface PodcastManager {
 
     ResponseEntity updateViewCount(UUID podcastId);
 
-    ResponseEntity updateLikeCount(UUID podcastId);
+    ResponseEntity updateLikeCount(TwoIDRequestDto dto);
 
-    ResponseEntity updateDisLikeCount(UUID podcastId);
+    ResponseEntity updateDisLikeCount(TwoIDRequestDto dto);
+
+    ResponseEntity userLikeCheck(TwoIDRequestDto dto);
 
     ResponseEntity listPodcastsEachUser(UUID userId, int till, int to);
 

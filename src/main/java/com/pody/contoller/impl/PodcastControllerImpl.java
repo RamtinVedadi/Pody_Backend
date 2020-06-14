@@ -52,8 +52,23 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity updateLikeCount(@PathVariable("id") UUID podcastId) {
-        return podcastManager.updateLikeCount(podcastId);
+    public ResponseEntity updateLikeCount(@RequestBody TwoIDRequestDto dto) {
+        return podcastManager.updateLikeCount(dto);
+    }
+
+    @Override
+    public ResponseEntity updateDisLikeCount(@RequestBody TwoIDRequestDto dto) {
+        return podcastManager.updateDisLikeCount(dto);
+    }
+
+    @Override
+    public ResponseEntity userLikeCheck(TwoIDRequestDto dto) {
+        return podcastManager.userLikeCheck(dto);
+    }
+
+    @Override
+    public ResponseEntity listLikedPodcastsEachUser(@PathVariable("id") UUID userId, @PathVariable int till, @PathVariable int to) {
+        return null;
     }
 
     @Override
