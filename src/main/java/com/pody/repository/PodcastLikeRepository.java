@@ -16,6 +16,6 @@ public interface PodcastLikeRepository extends AbstractRepository<PodcastLike, U
     @Query("delete from PodcastLike pl where pl.podcast.id = :podcastId and pl.user.id = :userId")
     int deletePodcastLike(@Param("podcastId") UUID podcastId, @Param("userId") UUID userId);
 
-    @Query("select new PodcastLike (pl.id) from PodcastLike pl where pl.user.id = :userId and pl.podcast.id = :podcastId")
+    @Query("select pl from PodcastLike pl where pl.user.id = :userId and pl.podcast.id = :podcastId")
     List<PodcastLike> checkIsLike(@Param("userId") UUID userId, @Param("podcastId") UUID podcastId);
 }

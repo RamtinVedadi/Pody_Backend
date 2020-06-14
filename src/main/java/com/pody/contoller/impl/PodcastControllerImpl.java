@@ -62,7 +62,7 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity userLikeCheck(TwoIDRequestDto dto) {
+    public ResponseEntity userLikeCheck(@RequestBody TwoIDRequestDto dto) {
         return podcastManager.userLikeCheck(dto);
     }
 

@@ -39,7 +39,7 @@ public interface PodcastController {
     @PostMapping(value = UrlStringMapping.URL092, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity updateDisLikeCount(TwoIDRequestDto dto);
 
-    @PostMapping(value = UrlStringMapping.URL093, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = UrlStringMapping.URL093,consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity userLikeCheck(TwoIDRequestDto dto);
 
     @GetMapping(value = UrlStringMapping.URL095, produces = APPLICATION_JSON_UTF8_VALUE)
