@@ -1439,6 +1439,25 @@ public class PodcastManagerImpl implements PodcastManager {
         }
     }
 
+    @Override
+    public ResponseEntity listLikedPodcastsEachUser(UUID userId, int till, int to) {
+        try {
+            //default till , to must be 0 , 24
+            if (userId != null) {
+                List<PodcastListDto> result = podcastRepository.listLikedEachUser(userId, PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
+
+                List<PodcastListDto> finalList = result.stream()
+                        .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
+                                ArrayList::new));
+                return ResponseEntity.ok(finalList);
+            } else {
+                return ResponseEntity.ok(ErrorJsonHandler.EMPTY_BODY);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public boolean isProbablyArabic(String s) {
         for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);

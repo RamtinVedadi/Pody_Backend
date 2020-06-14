@@ -61,4 +61,6 @@ public interface PodcastManager {
     ResponseEntity podcastListenLaterDelete(TwoIDRequestDto dto);
 
     ResponseEntity homePagePodcastListMobileInfinite(int till, int to, IdResponseDto dto);
+
+    ResponseEntity listLikedPodcastsEachUser(UUID userId, int till, int to);
 }

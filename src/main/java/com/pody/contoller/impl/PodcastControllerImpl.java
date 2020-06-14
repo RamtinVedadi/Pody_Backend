@@ -68,7 +68,7 @@ public class PodcastControllerImpl implements PodcastController {
 
     @Override
     public ResponseEntity listLikedPodcastsEachUser(@PathVariable("id") UUID userId, @PathVariable int till, @PathVariable int to) {
-        return null;
+        return podcastManager.listLikedPodcastsEachUser(userId, till, to);
     }
 
     @Override
