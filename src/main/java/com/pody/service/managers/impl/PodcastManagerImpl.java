@@ -846,19 +846,35 @@ public class PodcastManagerImpl implements PodcastManager {
             List<PodcastListDto> mostLiked = podcastRepository.listMostViewedAndLiked(PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "likeCount")));
             hpld.setMostLiked(mostLiked);
             //Podcasts Suggestions
-//            if (dto.getId() == null) {
-//                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
-//                List<PodcastListDto> suggestions = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, orderBy)));
-//                hpld.setSuggestions(suggestions);
-//            } else {
-//                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
-//                List<PodcastListDto> suggestions = podcastRepository.listSuggestionsDate(previousDate, now, dto.getId(), PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, orderBy)));
-//                hpld.setSuggestions(suggestions);
-//            }
-            String orderBy[] = {"createdDate", "viewCount", "likeCount"};
-            List<PodcastListDto> suggestions = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, orderBy)));
-            hpld.setSuggestions(suggestions);
+            if (dto.getId() == null) {
+                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
+                List<PodcastListDto> suggestions = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, orderBy)));
+                hpld.setSuggestions(suggestions);
+            } else {
+                Calendar date1 = Calendar.getInstance();
+                date1.add(Calendar.DATE, -30);
+                Date lastMonth = date1.getTime();
+                Date today = new Date();
 
+                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
+
+                List<PodcastListDto> finalSuggestions = new ArrayList<>();
+
+                List<PodcastListDto> listenLaterList = listenLaterRepository.listenLaterList(dto.getId(), PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate")));
+                if (listenLaterList != null && listenLaterList.size() > 0) {
+                    finalSuggestions.addAll(listenLaterList);
+                    List<PodcastListDto> suggestions = podcastRepository.listSuggestionsDate(previousDate, now, dto.getId(), PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, orderBy)));
+                    finalSuggestions.addAll(suggestions);
+                    List<PodcastListDto> followingPodcasts = podcastRepository.listFollowingPodcastersDate(dto.getId(), lastMonth, today, PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate")));
+                    finalSuggestions.addAll(followingPodcasts);
+                } else {
+                    List<PodcastListDto> suggestions = podcastRepository.listSuggestionsDate(previousDate, now, dto.getId(), PageRequest.of(0, 7, Sort.by(Sort.Direction.DESC, orderBy)));
+                    finalSuggestions.addAll(suggestions);
+                    List<PodcastListDto> followingPodcasts = podcastRepository.listFollowingPodcastersDate(dto.getId(), lastMonth, today, PageRequest.of(0, 8, Sort.by(Sort.Direction.DESC, "createdDate")));
+                    finalSuggestions.addAll(followingPodcasts);
+                }
+                hpld.setSuggestions(finalSuggestions);
+            }
 
             //Following Podcasters New Episodes
             if (dto.getId() != null) {
@@ -1240,18 +1256,34 @@ public class PodcastManagerImpl implements PodcastManager {
             //Podcasts section
             List<PodcastListDto> listAllPodcasts = new ArrayList<>();
             //Podcasts Suggestions
-            if (dto.getId() == null) {
+            if (dto.getId() != null) {
+                Calendar date = Calendar.getInstance();
+                date.add(Calendar.DATE, -7);
+                Date previousDate = date.getTime();
+                Date now = new Date();
+
                 String orderBy[] = {"createdDate", "viewCount", "likeCount"};
-//                List<PodcastListDto> suggestions = podcastRepository.listMostViewedAndLiked(PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, orderBy)));
+                List<PodcastListDto> suggestionsByDate = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, orderBy)));
+                listAllPodcasts.addAll(suggestionsByDate);
                 //but its not suggestions
                 List<PodcastListDto> suggestions = podcastRepository.listFollowingPodcasters(dto.getId(), PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
                 listAllPodcasts.addAll(suggestions);
-            }
-//            } else {
-//                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
-//                List<PodcastListDto> suggestions = podcastRepository.listSuggestions(dto.getId(), PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, orderBy)));
+
+                List<PodcastListDto> listenLaterList = listenLaterRepository.listenLaterList(dto.getId(), PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
+                listAllPodcasts.addAll(listenLaterList);
+            } else {
+                Calendar date = Calendar.getInstance();
+                date.add(Calendar.DATE, -7);
+                Date previousDate = date.getTime();
+                Date now = new Date();
+
+                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
+                List<PodcastListDto> suggestionsByDate = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, orderBy)));
+                listAllPodcasts.addAll(suggestionsByDate);
+
+//                List<PodcastListDto> suggestions = podcastRepository.listSuggestions(dto.getId(), PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, orderBy)));
 //                listAllPodcasts.addAll(suggestions);
-//            }
+            }
             //Podcasts added in last week
             List<PodcastListDto> latestReleased = podcastRepository.listMostViewedAndLiked(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
             listAllPodcasts.addAll(latestReleased);
@@ -1388,18 +1420,34 @@ public class PodcastManagerImpl implements PodcastManager {
             //Podcasts section
             List<PodcastListDto> listAllPodcasts = new ArrayList<>();
             //Podcasts Suggestions
-            if (dto.getId() == null) {
+            if (dto.getId() != null) {
+                Calendar date = Calendar.getInstance();
+                date.add(Calendar.DATE, -7);
+                Date previousDate = date.getTime();
+                Date now = new Date();
+
                 String orderBy[] = {"createdDate", "viewCount", "likeCount"};
-//                List<PodcastListDto> suggestions = podcastRepository.listMostViewedAndLiked(PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, orderBy)));
+                List<PodcastListDto> suggestionsByDate = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(till, to / 2, Sort.by(Sort.Direction.DESC, orderBy)));
+                listAllPodcasts.addAll(suggestionsByDate);
                 //but its not suggestions
                 List<PodcastListDto> suggestions = podcastRepository.listFollowingPodcasters(dto.getId(), PageRequest.of(till, to / 2, Sort.by(Sort.Direction.DESC, "createdDate")));
                 listAllPodcasts.addAll(suggestions);
-            }
-//            } else {
-//                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
-//                List<PodcastListDto> suggestions = podcastRepository.listSuggestions(dto.getId(), PageRequest.of(till / 2, to / 2, Sort.by(Sort.Direction.DESC, orderBy)));
+
+                List<PodcastListDto> listenLaterList = listenLaterRepository.listenLaterList(dto.getId(), PageRequest.of(till, to / 2, Sort.by(Sort.Direction.DESC, "createdDate")));
+                listAllPodcasts.addAll(listenLaterList);
+            } else {
+                Calendar date = Calendar.getInstance();
+                date.add(Calendar.DATE, -7);
+                Date previousDate = date.getTime();
+                Date now = new Date();
+
+                String orderBy[] = {"createdDate", "viewCount", "likeCount"};
+                List<PodcastListDto> suggestionsByDate = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(till, to / 2, Sort.by(Sort.Direction.DESC, orderBy)));
+                listAllPodcasts.addAll(suggestionsByDate);
+
+//                List<PodcastListDto> suggestions = podcastRepository.listSuggestions(dto.getId(), PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, orderBy)));
 //                listAllPodcasts.addAll(suggestions);
-//            }
+            }
             //Podcasts added in last week
             List<PodcastListDto> latestReleased = podcastRepository.listMostViewedAndLiked(PageRequest.of(till, to / 2, Sort.by(Sort.Direction.DESC, "createdDate")));
             listAllPodcasts.addAll(latestReleased);
