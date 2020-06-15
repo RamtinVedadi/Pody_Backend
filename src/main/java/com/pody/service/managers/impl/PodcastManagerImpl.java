@@ -1251,9 +1251,15 @@ public class PodcastManagerImpl implements PodcastManager {
                     .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
                             ArrayList::new));
 
-            finalList = finalList.subList(0, 20);
-            hpld.setPartOnePodcasts(finalList.subList(0, 10));
-            hpld.setPartTwoPodcasts(finalList.subList(10, 20));
+            if (finalList.size() >= 20) {
+                finalList = finalList.subList(0, 20);
+                hpld.setPartOnePodcasts(finalList.subList(0, 10));
+                hpld.setPartTwoPodcasts(finalList.subList(10, 20));
+            } else {
+                finalList = finalList.subList(0, finalList.size());
+                hpld.setPartOnePodcasts(finalList.subList(0, 10));
+                hpld.setPartTwoPodcasts(finalList.subList(10, finalList.size()));
+            }
 
             //News Section
             if (dto.getId() == null) {
