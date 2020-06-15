@@ -11,9 +11,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 public interface HashtagController {
 
-    @PostMapping(value = UrlStringMapping.URL051, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = UrlStringMapping.URL0180, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity create(Hashtag hashtag);
 
-    @PostMapping(value = UrlStringMapping.URL052, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = UrlStringMapping.URL0181, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity delete(UUID id);
 }

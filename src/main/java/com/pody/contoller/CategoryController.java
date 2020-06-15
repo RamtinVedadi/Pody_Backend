@@ -15,31 +15,31 @@ import java.util.UUID;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 public interface CategoryController {
-    @PostMapping(value = UrlStringMapping.URL030, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = UrlStringMapping.URL0110, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity create(Category category);
 
-    @PutMapping(value = UrlStringMapping.URL031, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(value = UrlStringMapping.URL0111, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity update(Category category, UUID id);
 
-    @DeleteMapping(value = UrlStringMapping.URL032, produces = APPLICATION_JSON_UTF8_VALUE)
+    @DeleteMapping(value = UrlStringMapping.URL0112, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity delete(UUID id);
 
-    @GetMapping(value = UrlStringMapping.URL033, produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = UrlStringMapping.URL0113, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity tree();
 
-    @GetMapping(value = UrlStringMapping.URL034, produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = UrlStringMapping.URL0114, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listParents();
 
-    @GetMapping(value = UrlStringMapping.URL035, produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = UrlStringMapping.URL0115, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listChildren(UUID id);
 
-    @PostMapping(value = UrlStringMapping.URL079, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = UrlStringMapping.URL0116, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity read(TwoIDRequestDto dto);
 
-    @PostMapping(value = UrlStringMapping.URL080, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = UrlStringMapping.URL0117, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listAllCategoryPage(IdResponseDto dto);
 
-    @PostMapping(value = UrlStringMapping.URL084, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = UrlStringMapping.URL0118, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity readInfinite(int till, int to, IdResponseDto dto);
 
 }

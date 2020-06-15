@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -27,4 +28,7 @@ public class History {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
+
+    @Column
+    private Date createdDate;
 }

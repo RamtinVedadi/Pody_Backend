@@ -344,11 +344,13 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override //Tested
-    public ResponseEntity updateViewCount(UUID podcastId) {
+    public ResponseEntity updateViewCount(TwoIDRequestDto dto) {
         try {
-            if (podcastId != null) {
-                int result = podcastRepository.updateViewCount(podcastId);
-                Podcast findedPodcast = podcastRepository.findOneById(podcastId);
+            //first id is for podcast id
+            //second is for logined user id
+            if (dto != null) {
+                int result = podcastRepository.updateViewCount(dto.getFirstID());
+                Podcast findedPodcast = podcastRepository.findOneById(dto.getFirstID());
                 if (result == 1) {
                     Calendar date = Calendar.getInstance();
                     date.add(Calendar.DATE, -1);
@@ -365,12 +367,25 @@ public class PodcastManagerImpl implements PodcastManager {
                     } else {
                         podcastViewRepository.updateViewCount(dailyViewExistence.getId());
                     }
-                    return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                    if (dto.getSecondID() != null) {
+                        History h = new History();
+                        h.setPodcast(findedPodcast);
+                        h.setUser(new User(dto.getSecondID()));
+                        h.setCreatedDate(new Date());
+                        History userHistory = historyRepository.save(h);
+                        if (userHistory != null) {
+                            return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                        } else {
+                            return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
+                        }
+                    } else {
+                        return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                    }
                 } else {
                     return new ResponseEntity(ErrorJsonHandler.NOT_SUCCESSFUL, HttpStatus.BAD_REQUEST);
                 }
             } else {
-                return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
             }
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -1399,9 +1414,15 @@ public class PodcastManagerImpl implements PodcastManager {
                     .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
                             ArrayList::new));
 
-            finalList = finalList.subList(0, 20);
-            hpld.setPartOnePodcasts(finalList.subList(0, 10));
-            hpld.setPartTwoPodcasts(finalList.subList(10, 20));
+            if (finalList.size() >= 20) {
+                finalList = finalList.subList(0, 20);
+                hpld.setPartOnePodcasts(finalList.subList(0, 10));
+                hpld.setPartTwoPodcasts(finalList.subList(10, 20));
+            } else {
+                finalList = finalList.subList(0, finalList.size());
+                hpld.setPartOnePodcasts(finalList.subList(0, 10));
+                hpld.setPartTwoPodcasts(finalList.subList(10, finalList.size()));
+            }
 
             //News Section
             if (dto.getId() == null) {
@@ -1456,6 +1477,22 @@ public class PodcastManagerImpl implements PodcastManager {
                         .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
                                 ArrayList::new));
                 return ResponseEntity.ok(finalList);
+            } else {
+                return ResponseEntity.ok(ErrorJsonHandler.EMPTY_BODY);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity listHistoryEachUser(UUID userId, int till, int to) {
+        try {
+            //default till , to must be 0 , 20
+            if (userId != null) {
+                List<PodcastListDto> result = podcastRepository.listHistoryEachUser(userId, PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
+
+                return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.ok(ErrorJsonHandler.EMPTY_BODY);
             }

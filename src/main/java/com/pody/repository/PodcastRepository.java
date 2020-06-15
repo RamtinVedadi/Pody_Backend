@@ -75,6 +75,15 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " p.viewCount as viewCount , p.likeCount as likeCount, p.duration as duration, u.id as userId," +
             " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
             " from Podcast p inner join User u on p.user.id = u.id " +
+            " inner join History h on p.id = h.podcast.id " +
+            " where h.user.id = :userId ")
+    List<PodcastListDto> listHistoryEachUser(@Param("userId") UUID userId, Pageable pageable);//One Month Data
+
+    @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
+            " p.viewCount as viewCount , p.likeCount as likeCount, p.duration as duration, u.id as userId," +
+            " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
+            " from Podcast p inner join User u on p.user.id = u.id " +
             " inner join UserFollow uf on p.user.id = uf.follower.id " +
             " where uf.user.id = :userId and p.createdDate between :lastMonth and :today ")
     List<PodcastListDto> listFollowingPodcastersDate(@Param("userId") UUID userId, @Param("lastMonth") Date lastMonth, @Param("today") Date today, Pageable pageable);//One Month Data

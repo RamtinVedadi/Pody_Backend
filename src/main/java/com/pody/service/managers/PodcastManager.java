@@ -22,7 +22,7 @@ public interface PodcastManager {
 
     ResponseEntity uploadPodcast(MultipartFile image, MultipartFile audio, UUID podcastId);
 
-    ResponseEntity updateViewCount(UUID podcastId);
+    ResponseEntity updateViewCount(TwoIDRequestDto dto);
 
     ResponseEntity updateLikeCount(TwoIDRequestDto dto);
 
@@ -63,4 +63,6 @@ public interface PodcastManager {
     ResponseEntity homePagePodcastListMobileInfinite(int till, int to, IdResponseDto dto);
 
     ResponseEntity listLikedPodcastsEachUser(UUID userId, int till, int to);
+
+    ResponseEntity listHistoryEachUser(UUID userId, int till, int to);
 }

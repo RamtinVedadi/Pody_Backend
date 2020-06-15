@@ -47,8 +47,8 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity updateViewCount(@PathVariable("id") UUID podcastId) {
-        return podcastManager.updateViewCount(podcastId);
+    public ResponseEntity updateViewCount(@RequestBody TwoIDRequestDto dto) {
+        return podcastManager.updateViewCount(dto);
     }
 
     @Override
@@ -69,6 +69,11 @@ public class PodcastControllerImpl implements PodcastController {
     @Override
     public ResponseEntity listLikedPodcastsEachUser(@PathVariable("id") UUID userId, @PathVariable int till, @PathVariable int to) {
         return podcastManager.listLikedPodcastsEachUser(userId, till, to);
+    }
+
+    @Override
+    public ResponseEntity listHistoryEachUser(@PathVariable("id") UUID userId, @PathVariable int till, @PathVariable int to) {
+        return podcastManager.listHistoryEachUser(userId, till, to);
     }
 
     @Override
@@ -157,7 +162,7 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity homePagePodcastListMobileInfinite(int till, int to, IdResponseDto dto) {
+    public ResponseEntity homePagePodcastListMobileInfinite(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
         return podcastManager.homePagePodcastListMobileInfinite(till, to, dto);
     }
 }

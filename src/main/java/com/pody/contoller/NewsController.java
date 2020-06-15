@@ -13,18 +13,18 @@ import java.util.UUID;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 public interface NewsController {
-    @PostMapping(value = UrlStringMapping.URL060, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = UrlStringMapping.URL0200, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity create(News news);
 
-    @PutMapping(value = UrlStringMapping.URL061, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(value = UrlStringMapping.URL0201, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity update(News news, UUID id);
 
-    @DeleteMapping(value = UrlStringMapping.URL062, produces = APPLICATION_JSON_UTF8_VALUE)
+    @DeleteMapping(value = UrlStringMapping.URL0202, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity delete(UUID id);
 
-    @GetMapping(value = UrlStringMapping.URL063, produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = UrlStringMapping.URL0203, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listForHomePage();
 
-    @GetMapping(value = UrlStringMapping.URL064, produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = UrlStringMapping.URL0204, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity fullList();
 }
