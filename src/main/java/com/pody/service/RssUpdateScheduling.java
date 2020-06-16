@@ -47,7 +47,7 @@ public class RssUpdateScheduling {
         this.userRepository = userRepository;
     }
 
-    @Scheduled(cron = "0 0 */1 ? * *", zone = "Asia/Tehran")
+    @Scheduled(cron = "0 0 1 ? * *", zone = "Asia/Tehran")
     public void rssUpdate() {
 
         List<UserRssUpdateDto> users = userRepository.rssUpdateList();

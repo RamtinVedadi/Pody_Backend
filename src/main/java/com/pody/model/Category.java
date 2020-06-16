@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table
