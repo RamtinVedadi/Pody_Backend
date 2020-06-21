@@ -71,8 +71,8 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity listChannels(@RequestBody IdResponseDto dto) {
-        return userManager.listChannels(dto);
+    public ResponseEntity listChannels(@RequestBody IdResponseDto dto, @PathVariable int till, @PathVariable int to) {
+        return userManager.listChannels(dto, till, to);
     }
 
     @Override

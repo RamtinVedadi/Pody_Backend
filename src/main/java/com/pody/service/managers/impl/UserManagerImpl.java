@@ -1,16 +1,11 @@
 package com.pody.service.managers.impl;
 
-import com.pody.dto.repositories.CategorySearchDto;
-import com.pody.dto.repositories.ChannelsListDto;
-import com.pody.dto.repositories.NewsListDto;
+import com.pody.dto.repositories.*;
 import com.pody.dto.repositories.PodcastListDto;
 import com.pody.dto.requests.IdStringRequestDto;
 import com.pody.dto.requests.StringRequestDto;
 import com.pody.dto.requests.TwoIDRequestDto;
-import com.pody.dto.responses.IdResponseDto;
-import com.pody.dto.responses.SubscriptionsDto;
-import com.pody.dto.responses.UserReadResultDto;
-import com.pody.dto.responses.UserSubscriptionsListDto;
+import com.pody.dto.responses.*;
 import com.pody.model.User;
 import com.pody.model.UserFollow;
 import com.pody.repository.*;
@@ -43,6 +38,7 @@ import java.util.UUID;
 @Service
 @Transactional
 public class UserManagerImpl implements UserManager {
+    private PodcastViewRepository podcastViewRepository;
     private UserFollowRepository userFollowRepository;
     private CategoryRepository categoryRepository;
     private AltUserRepository altUserRepository;
@@ -52,9 +48,10 @@ public class UserManagerImpl implements UserManager {
     private ModelMapper modelMapper;
 
     @Autowired
-    public UserManagerImpl(UserFollowRepository userFollowRepository, CategoryRepository categoryRepository,
+    public UserManagerImpl(PodcastViewRepository podcastViewRepository, UserFollowRepository userFollowRepository, CategoryRepository categoryRepository,
                            AltUserRepository altUserRepository, PodcastRepository podcastRepository,
                            NewsRepository newsRepository, UserRepository userRepository, ModelMapper modelMapper) {
+        this.podcastViewRepository = podcastViewRepository;
         this.userFollowRepository = userFollowRepository;
         this.categoryRepository = categoryRepository;
         this.altUserRepository = altUserRepository;
@@ -290,16 +287,66 @@ public class UserManagerImpl implements UserManager {
         }
     }
 
-    @Override //First Part Tested
-    public ResponseEntity listChannels(IdResponseDto dto) {
+    @Override
+    public ResponseEntity listChannels(IdResponseDto dto, int till, int to) {
         try {
+            //till is 0 and to is 20
+            //id is logined user id
             if (dto.getId() == null) {
-                List<ChannelsListDto> users = userRepository.listHomePageUsers(PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "followCount")));
-                return ResponseEntity.ok(users);
+                List<ChannelsPageDto> users = userRepository.listChannels(PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "followCount")));
+                List<ChannelsDto> channelsList = new ArrayList<>();
+                for (ChannelsPageDto cpd : users) {
+                    ChannelsDto cd = new ChannelsDto();
+                    cd.setChannelInfo(cpd);
+                    cd.setIsFollow(false);
+
+                    Integer episodeCount = podcastRepository.channelEpisodeCount(cpd.getId());
+                    if (episodeCount != null) {
+                        cd.setEpisodeCount(episodeCount);
+                    } else {
+                        cd.setEpisodeCount(0);
+                    }
+                    Integer listenCount = podcastViewRepository.channelListenCount(cpd.getId());
+                    if (listenCount != null) {
+                        cd.setListenCount(listenCount);
+                    } else {
+                        cd.setListenCount(0);
+                    }
+
+                    channelsList.add(cd);
+                }
+                return ResponseEntity.ok(channelsList);
             } else {
+                List<ChannelsPageDto> users = userRepository.listChannelsLoginedUser(dto.getId(), PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "followerCount")));
+                List<ChannelsDto> channelsList = new ArrayList<>();
+                for (ChannelsPageDto cpd : users) {
+                    ChannelsDto cd = new ChannelsDto();
+                    cd.setChannelInfo(cpd);
+                    //first id is for logined user
+                    //second id is for channel id
+                    UserFollow isAvailable = userFollowRepository.isUserFollowAvailable(dto.getId(), cpd.getId());
+                    if (isAvailable != null) {
+                        cd.setIsFollow(true);
+                    } else {
+                        cd.setIsFollow(false);
+                    }
 
+                    Integer episodeCount = podcastRepository.channelEpisodeCount(cpd.getId());
+                    if (episodeCount != null) {
+                        cd.setEpisodeCount(episodeCount);
+                    } else {
+                        cd.setEpisodeCount(0);
+                    }
+                    Integer listenCount = podcastViewRepository.channelListenCount(cpd.getId());
+                    if (listenCount != null) {
+                        cd.setListenCount(listenCount);
+                    } else {
+                        cd.setListenCount(0);
+                    }
 
-                return ResponseEntity.ok("");
+                    channelsList.add(cd);
+                }
+                return ResponseEntity.ok(channelsList);
             }
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -50,7 +50,7 @@ public interface UserController {
     ResponseEntity findUserForResetPassword(StringRequestDto dto);
 
     @PostMapping(value = UrlStringMapping.URL0020, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity listChannels(IdResponseDto dto);
+    ResponseEntity listChannels(IdResponseDto dto, int till, int to);
 
     @PutMapping(value = UrlStringMapping.URL0021, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity updateIsChannel(IdResponseDto dto);//input is user id

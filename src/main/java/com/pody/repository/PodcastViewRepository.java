@@ -18,4 +18,7 @@ public interface PodcastViewRepository extends AbstractRepository<PodcastView, U
     @Modifying
     @Query("update PodcastView p set p.count = p.count + 1 where p.id = :id")
     int updateViewCount(@Param("id") UUID id);
+
+    @Query("select sum(pv.count) from PodcastView pv INNER join Podcast p on pv.podcast.id = p.id where  p.user.id = :userId")
+    Integer channelListenCount(@Param("userId") UUID id);
 }

@@ -32,7 +32,7 @@ public interface UserManager {
 
     ResponseEntity findUserForResetPassword(StringRequestDto dto);
 
-    ResponseEntity listChannels(IdResponseDto dto);
+    ResponseEntity listChannels(IdResponseDto dto, int till, int to);
 
     ResponseEntity updateIsChannel(IdResponseDto dto);
 

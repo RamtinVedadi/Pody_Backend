@@ -37,6 +37,6 @@ public class HomePageListDto {
     List<NewsListDto> news;
 
     @JsonProperty("users")
-    List<ChannelsListDto> users;
+    List<ChannelListenCountDto> users;
 
 }

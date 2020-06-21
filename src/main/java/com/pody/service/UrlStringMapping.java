@@ -16,7 +16,7 @@ public class UrlStringMapping {
     public static final String URL0017 = "/api/user/check/username";//POST
     public static final String URL0018 = "/api/user/resetPassword";//POST
     public static final String URL0019 = "/api/user/find/resetPassword";//POST
-    public static final String URL0020 = "/api/user/list/channels";//Post
+    public static final String URL0020 = "/api/user/list/channels/{till}/{to}";//Post
     public static final String URL0021 = "/api/user/update/isChannel";//Put
     public static final String URL0022 = "/api/user/list/subscriptions/{id}";//Get
     public static final String URL0023 = "/api/user/list/subscriptions/sidenav/{id}";//Get
@@ -44,8 +44,8 @@ public class UrlStringMapping {
     public static final String URL0057 = "/api/podcast/list/listenLater/{till}/{to}";//POST
     public static final String URL0058 = "/api/podcast/listenLater/check";//POST
     public static final String URL0059 = "/api/podcast/listenLater/delete";//DELETE
-    public static final String URL0060 = "/api/podcast/{id}/history";//GET
-    public static final String URL0061 = "/api/podcast/list/{id}/history";//GET
+    public static final String URL0060 = "";
+    public static final String URL0061 = "";
     public static final String URL0062 = "/api/podcast/rss";//POST
     public static final String URL0063 = "/api/podcast/list/trending";//GET
     public static final String URL0064 = "/api/podcast/list/home";//Post

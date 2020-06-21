@@ -1,6 +1,7 @@
 package com.pody.repository;
 
 import com.pody.dto.repositories.ChannelsListDto;
+import com.pody.dto.repositories.ChannelsPageDto;
 import com.pody.dto.repositories.UserRssUpdateDto;
 import com.pody.dto.repositories.UserSearchDto;
 import com.pody.model.User;
@@ -57,6 +58,8 @@ public interface UserRepository extends AbstractRepository<User, UUID> {
 
     User findOneByEmail(String email);
 
+    User findOneByRssUrl(String rssUrl);
+
     @Query("select u.id as id, u.rssUrl as rssUrl, u.profileImageAddress as profileImageAddress from User u where rssUrl is not null")
     List<UserRssUpdateDto> rssUpdateList();
 
@@ -86,6 +89,18 @@ public interface UserRepository extends AbstractRepository<User, UUID> {
 
     @Query("select u.id as id, u.username as username, u.title as userTitle, u.profileImageAddress as imageAddress, u.followerCount as followCount from User u where u.isChannel = 1")
     List<ChannelsListDto> listHomePageUsers(Pageable pageable);
+
+    @Query("select u.id as id, u.username as username, u.title as userTitle, u.profileImageAddress as imageAddress," +
+            " u.firstName as firstName, u.lastName as lastName, u.followerCount as followCount, u.instagramUrl as instagramUrl," +
+            " u.twitterUrl as twitterUrl, u.facebookUrl as facebookUrl, u.youtubeUrl as youtubeUrl, u.websiteUrl as websiteUrl" +
+            " from User u where u.isChannel = 1")
+    List<ChannelsPageDto> listChannels(Pageable pageable);
+
+    @Query("select u.id as id, u.username as username, u.title as userTitle, u.profileImageAddress as imageAddress," +
+            " u.firstName as firstName, u.lastName as lastName, u.followerCount as followCount, u.instagramUrl as instagramUrl," +
+            " u.twitterUrl as twitterUrl, u.facebookUrl as facebookUrl, u.youtubeUrl as youtubeUrl, u.websiteUrl as websiteUrl" +
+            " from User u where u.isChannel = 1 and not u.id = :userId")
+    List<ChannelsPageDto> listChannelsLoginedUser(@Param("userId") UUID userId, Pageable pageable);
 
     @Query("select u.id as id, u.username as username, u.title as userTitle, u.profileImageAddress as imageAddress, u.followerCount as followCount" +
             " from User u where u.isChannel = 1 and not u.id = :userId")

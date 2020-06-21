@@ -75,12 +75,6 @@ public interface PodcastController {
     @DeleteMapping(value = UrlStringMapping.URL0059, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity podcastListenLaterDelete(TwoIDRequestDto dto);
 
-    @GetMapping(value = UrlStringMapping.URL0060, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity addToHistory(UUID id);
-
-    @GetMapping(value = UrlStringMapping.URL0061, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity userPodcastHistoryList(UUID userId);
-
     @PostMapping(value = UrlStringMapping.URL0062, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity getUserRssData(RssDataDto rssDataDto);
 

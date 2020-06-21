@@ -32,11 +32,11 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -785,17 +785,17 @@ public class PodcastManagerImpl implements PodcastManager {
             String view[] = {"createdDate", "viewCount"};
             String like[] = {"createdDate", "likeCount"};
 
-            List<PodcastListDto> viewingTrendList = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 40, Sort.by(Sort.Direction.DESC, view)));
-            List<PodcastListDto> likedTrendList = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 40, Sort.by(Sort.Direction.DESC, like)));
+            List<PodcastTrendingDto> viewingTrendList = podcastRepository.listLatestReleasedTrending(previousDate, now, PageRequest.of(0, 40, Sort.by(Sort.Direction.DESC, view)));
+            List<PodcastTrendingDto> likedTrendList = podcastRepository.listLatestReleasedTrending(previousDate, now, PageRequest.of(0, 40, Sort.by(Sort.Direction.DESC, like)));
 
             Calendar date1 = Calendar.getInstance();
             date1.add(Calendar.DATE, -1);
             Date yesterday = date1.getTime();
             Date today = new Date();
 
-            List<PodcastListDto> dailyTrendList = podcastRepository.listDailyTrends(yesterday, today, PageRequest.of(0, 25));
+            List<PodcastTrendingDto> dailyTrendList = podcastRepository.listDailyTrends(yesterday, today, PageRequest.of(0, 25));
 
-            List<PodcastListDto> unionList = new ArrayList<>();
+            List<PodcastTrendingDto> unionList = new ArrayList<>();
             unionList.addAll(viewingTrendList);
             unionList.addAll(likedTrendList);
 
@@ -803,8 +803,8 @@ public class PodcastManagerImpl implements PodcastManager {
                 unionList.addAll(dailyTrendList);
             }
 
-            List<PodcastListDto> finalList = unionList.stream()
-                    .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
+            List<PodcastTrendingDto> finalList = unionList.stream()
+                    .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastTrendingDto::getPodcastId))),
                             ArrayList::new));
 
             List<CategorySearchDto> categories = categoryRepository.listTrendingCategory(PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "p.viewCount")));
@@ -813,7 +813,11 @@ public class PodcastManagerImpl implements PodcastManager {
 //                            ArrayList::new));
 
             TrendingResponseDto trd = new TrendingResponseDto();
-            trd.setPodcasts(finalList);
+            if (finalList.size() == 50 || finalList.size() < 50) {
+                trd.setPodcasts(finalList);
+            } else if (finalList.size() > 50) {
+                trd.setPodcasts(finalList.subList(0, 50));
+            }
             trd.setCategories(categories);
 
             return ResponseEntity.ok(trd);
@@ -874,6 +878,9 @@ public class PodcastManagerImpl implements PodcastManager {
                     List<PodcastListDto> followingPodcasts = podcastRepository.listFollowingPodcastersDate(dto.getId(), lastMonth, today, PageRequest.of(0, 8, Sort.by(Sort.Direction.DESC, "createdDate")));
                     finalSuggestions.addAll(followingPodcasts);
                 }
+                finalSuggestions = finalSuggestions.stream()
+                        .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(PodcastListDto::getPodcastId))),
+                                ArrayList::new));
                 hpld.setSuggestions(finalSuggestions);
             }
 
@@ -902,10 +909,34 @@ public class PodcastManagerImpl implements PodcastManager {
             //User Section
             if (dto.getId() == null) {
                 List<ChannelsListDto> users = userRepository.listHomePageUsers(PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "followerCount")));
-                hpld.setUsers(users);
+                List<ChannelListenCountDto> finalUsers = new ArrayList<>();
+                for (ChannelsListDto cld : users) {
+                    ChannelListenCountDto clcd = new ChannelListenCountDto();
+                    clcd.setChannelInfo(cld);
+                    Integer listenCount = podcastViewRepository.channelListenCount(cld.getId());
+                    if (listenCount != null) {
+                        clcd.setListenCount(listenCount);
+                    } else {
+                        clcd.setListenCount(0);
+                    }
+                    finalUsers.add(clcd);
+                }
+                hpld.setUsers(finalUsers);
             } else {
                 List<ChannelsListDto> users = userRepository.listHomePageUsersLoginedUser(dto.getId(), PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "followerCount")));
-                hpld.setUsers(users);
+                List<ChannelListenCountDto> finalUsers = new ArrayList<>();
+                for (ChannelsListDto cld : users) {
+                    ChannelListenCountDto clcd = new ChannelListenCountDto();
+                    clcd.setChannelInfo(cld);
+                    Integer listenCount = podcastViewRepository.channelListenCount(cld.getId());
+                    if (listenCount != null) {
+                        clcd.setListenCount(listenCount);
+                    } else {
+                        clcd.setListenCount(0);
+                    }
+                    finalUsers.add(clcd);
+                }
+                hpld.setUsers(finalUsers);
             }
 
             return ResponseEntity.ok(hpld);
@@ -919,6 +950,10 @@ public class PodcastManagerImpl implements PodcastManager {
         try {
             if (dto != null) {
                 try {
+                    User rssUser = userRepository.findOneByRssUrl(dto.getStringValue());
+                    if (rssUser != null) {
+                        return ResponseEntity.ok(ErrorJsonHandler.DUPLICATE_USERNAME);
+                    }
                     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                     URLConnection connection = new URL(dto.getStringValue()).openConnection();
@@ -1102,6 +1137,14 @@ public class PodcastManagerImpl implements PodcastManager {
 
                             //Title
                             String podcastTitle = eElement.getElementsByTagName("title").item(0).getTextContent();
+
+//                            CharsetDetector detector = new CharsetDetector();
+//                            detector.setText(podcastTitle.getBytes());
+//                            String textEncoding = detector.detect().getName();
+//
+//                            byte[] bytes = podcastTitle.getBytes("windows-1252");
+//                            String asciiEncodedString = new String(bytes, "utf-8");
+
                             Podcast pTitle = podcastRepository.findOneByTitleAndUser(podcastTitle, podcasterDetail);
                             if (pTitle == null) {
                                 podcast.setTitle(podcastTitle);

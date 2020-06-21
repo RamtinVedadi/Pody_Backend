@@ -2,6 +2,7 @@ package com.pody.repository;
 
 import com.pody.dto.repositories.PodcastListDto;
 import com.pody.dto.repositories.PodcastReadDto;
+import com.pody.dto.repositories.PodcastTrendingDto;
 import com.pody.model.Podcast;
 import com.pody.model.User;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +52,14 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " from Podcast p inner join User u on p.user.id = u.id " +
             " where p.createdDate between :lastWeek and :today ")
     List<PodcastListDto> listLatestReleased(@Param("lastWeek") Date lastWeek, @Param("today") Date today, Pageable pageable);//Also use for One Month Data
+
+    @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.shortDescription as shortDescription," +
+            " p.viewCount as viewCount , p.likeCount as likeCount, p.duration as duration, u.id as userId," +
+            " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
+            " from Podcast p inner join User u on p.user.id = u.id " +
+            " where p.createdDate between :lastWeek and :today ")
+    List<PodcastTrendingDto> listLatestReleasedTrending(@Param("lastWeek") Date lastWeek, @Param("today") Date today, Pageable pageable);//Also use for One Month Data
 
     @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
             " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
@@ -119,13 +128,13 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
     PodcastReadDto readPodcast(@Param("id") UUID id);
 
     @Query("select distinct  p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
-            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.shortDescription as shortDescription," +
             " p.duration as duration, p.viewCount as viewCount , p.likeCount as likeCount, u.id as userId," +
             " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
             " from Podcast p inner join User u on p.user.id = u.id " +
             " inner join PodcastView pv on p.id = pv.podcast.id " +
             " where pv.count >= 500 and pv.date between :yesterday and :today ")
-    List<PodcastListDto> listDailyTrends(@Param("yesterday") Date yesterday, @Param("today") Date today, Pageable pageable);//Also use for One Month Data
+    List<PodcastTrendingDto> listDailyTrends(@Param("yesterday") Date yesterday, @Param("today") Date today, Pageable pageable);//Also use for One Month Data
 
     @Query("select distinct p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
             " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
@@ -185,6 +194,9 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " from Podcast p inner join User u on p.user.id = u.id " +
             " where p.user.id = :userId")
     List<PodcastListDto> listPodcastEachUser(@Param("userId") UUID id, Pageable pageable);
+
+    @Query("select count(p.id) from Podcast p where p.user.id = :userId")
+    Integer channelEpisodeCount(@Param("userId") UUID id);
 
     @Modifying
     @Query("update Podcast p set p.imageAddress = :imagePath where p.id = :id")

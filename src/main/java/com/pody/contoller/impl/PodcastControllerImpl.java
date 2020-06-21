@@ -122,16 +122,6 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity addToHistory(@PathVariable UUID id) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity userPodcastHistoryList(@PathVariable("id") UUID userId) {
-        return null;
-    }
-
-    @Override
     public ResponseEntity getUserRssData(@RequestBody RssDataDto rssDataDto) {
         return podcastManager.getRssData(rssDataDto);
     }
