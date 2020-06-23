@@ -270,7 +270,7 @@ public class CategoryManagerImpl implements CategoryManager {
                 } else {
                     return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-                String[] orderby = {"likeCount", "viewCount"};
+                String[] orderby = {"viewCount", "likeCount"};
                 List<PodcastListDto> podcasts = podcastRepository.listTopPodcastsEachCategory(category.getId(), PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, orderby)));
                 cid.setPodcasts(podcasts);
 
