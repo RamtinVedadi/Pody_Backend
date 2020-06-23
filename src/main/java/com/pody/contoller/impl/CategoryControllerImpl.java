@@ -62,4 +62,9 @@ public class CategoryControllerImpl implements CategoryController {
     public ResponseEntity readInfinite(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
         return categoryManager.readInfinite(till, to, dto);
     }
+
+    @Override
+    public ResponseEntity categoryInfo(@RequestBody IdResponseDto dto) {
+        return categoryManager.categoryInfo(dto);
+    }
 }

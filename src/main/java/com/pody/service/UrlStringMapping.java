@@ -64,6 +64,7 @@ public class UrlStringMapping {
     public static final String URL0116 = "/api/category/read";//Post
     public static final String URL0117 = "/api/category/list/page";//Post
     public static final String URL0118 = "/api/category/read/infinite/{till}/{to}";//Post
+    public static final String URL0119 = "/api/category/info";//Post
     //comment urls
     public static final String URL0140 = "/api/comment/create";//POST
     public static final String URL0141 = "/api/comment/update/{id}";//PUT

@@ -1457,11 +1457,6 @@ public class PodcastManagerImpl implements PodcastManager {
     public ResponseEntity homePagePodcastListMobileInfinite(int till, int to, IdResponseDto dto) {
         try {
             //default data of till and to is 0 and 20 in order
-            HomeMobileListDto hpld = new HomeMobileListDto();
-
-            //Categories section
-            hpld.setCategories(null);
-
             //Podcasts section
             List<PodcastListDto> listAllPodcasts = new ArrayList<>();
             //Podcasts Suggestions
@@ -1509,51 +1504,11 @@ public class PodcastManagerImpl implements PodcastManager {
 
             if (finalList.size() >= 20) {
                 finalList = finalList.subList(0, 20);
-                hpld.setPartOnePodcasts(finalList.subList(0, 10));
-                hpld.setPartTwoPodcasts(finalList.subList(10, 20));
             } else {
                 finalList = finalList.subList(0, finalList.size());
-                hpld.setPartOnePodcasts(finalList.subList(0, 10));
-                hpld.setPartTwoPodcasts(finalList.subList(10, finalList.size()));
             }
 
-            //News Section
-            if (dto.getId() == null) {
-                List<NewsListDto> listNews = newsRepository.listNewsMobile(PageRequest.of(till, to / 10, Sort.by(Sort.Direction.DESC, "createdDate")));
-                if (listNews.size() == 0) {
-                    hpld.setFirstNews(null);
-                    hpld.setSecondNews(null);
-                } else if (listNews.size() == 1) {
-                    hpld.setFirstNews(listNews);
-                    hpld.setSecondNews(null);
-                } else {
-                    hpld.setFirstNews(listNews.subList(0, 1));
-                    hpld.setSecondNews(listNews.subList(1, 2));
-                }
-            } else {
-                List<NewsListDto> listNews = newsRepository.listNewsLoginedUserMobile(dto.getId(), PageRequest.of(till, to / 10, Sort.by(Sort.Direction.DESC, "createdDate")));
-                if (listNews.size() == 0) {
-                    hpld.setFirstNews(null);
-                    hpld.setSecondNews(null);
-                } else if (listNews.size() == 1) {
-                    hpld.setFirstNews(listNews);
-                    hpld.setSecondNews(null);
-                } else {
-                    hpld.setFirstNews(listNews.subList(0, 1));
-                    hpld.setSecondNews(listNews.subList(1, 2));
-                }
-            }
-
-            //User Section
-            if (dto.getId() == null) {
-                List<ChannelsListDto> users = userRepository.listHomePageUsers(PageRequest.of(till, to / 2, Sort.by(Sort.Direction.DESC, "followerCount")));
-                hpld.setUsers(users);
-            } else {
-                List<ChannelsListDto> users = userRepository.listHomePageUsersLoginedUser(dto.getId(), PageRequest.of(till, to / 2, Sort.by(Sort.Direction.DESC, "followerCount")));
-                hpld.setUsers(users);
-            }
-
-            return ResponseEntity.ok(hpld);
+            return ResponseEntity.ok(finalList);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }

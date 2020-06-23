@@ -145,6 +145,15 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " where pc.category.id = :categoryId and not p.id = :podcastId ")
     List<PodcastListDto> listRandomPodcastForEachPodcast(@Param("categoryId") UUID categoryId, @Param("podcastId") UUID podcastId, Pageable pageable);
 
+    @Query("select distinct p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
+            " p.duration as duration, p.viewCount as viewCount , p.likeCount as likeCount, u.id as userId," +
+            " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
+            " from Podcast p inner join User u on p.user.id = u.id " +
+            " inner join PodcastCategory pc on p.id = pc.podcast.id " +
+            " where pc.category.id = :categoryId ")
+    List<PodcastListDto> listTopPodcastsEachCategory(@Param("categoryId") UUID categoryId, Pageable pageable);
+
     @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
             " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.duration as duration, p.viewCount as viewCount," +
             " p.likeCount as likeCount, u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +

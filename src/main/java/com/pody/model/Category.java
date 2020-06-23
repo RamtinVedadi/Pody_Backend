@@ -19,6 +19,9 @@ public class Category extends AbstractModel {
     @Column
     private String englishName;
 
+    @Column(length = 65535, columnDefinition = "Text")
+    private String description;
+
     @Column
     private Boolean deleteFlag = false;
 

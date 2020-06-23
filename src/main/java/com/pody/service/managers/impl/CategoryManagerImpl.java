@@ -5,6 +5,7 @@ import com.pody.dto.repositories.CategorySearchDto;
 import com.pody.dto.repositories.PodcastListDto;
 import com.pody.dto.requests.TwoIDRequestDto;
 import com.pody.dto.responses.CategoryDto;
+import com.pody.dto.responses.CategoryInfoDto;
 import com.pody.dto.responses.CategoryReadResultDto;
 import com.pody.dto.responses.IdResponseDto;
 import com.pody.model.Category;
@@ -250,6 +251,30 @@ public class CategoryManagerImpl implements CategoryManager {
                     return ResponseEntity.ok(ErrorJsonHandler.EMPTY_ID_FIELD);
                 }
 
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity categoryInfo(IdResponseDto dto) {
+        try {
+            if (dto != null) {
+                CategoryInfoDto cid = new CategoryInfoDto();
+                Category category = categoryRepository.getOne(dto.getId());
+                if (category != null) {
+                    cid.setCategoryInfo(category);
+                } else {
+                    return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+                String[] orderby = {"likeCount", "viewCount"};
+                List<PodcastListDto> podcasts = podcastRepository.listTopPodcastsEachCategory(category.getId(), PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, orderby)));
+                cid.setPodcasts(podcasts);
+
+                return ResponseEntity.ok(cid);
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
             }

@@ -25,4 +25,6 @@ public interface CategoryManager {
     ResponseEntity listAllCategoryPage(IdResponseDto dto);
 
     ResponseEntity readInfinite(int till, int to, IdResponseDto dto);
+
+    ResponseEntity categoryInfo(IdResponseDto dto);
 }
