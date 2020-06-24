@@ -60,7 +60,7 @@ public interface UserRepository extends AbstractRepository<User, UUID> {
 
     User findOneByRssUrl(String rssUrl);
 
-    @Query("select u.id as id, u.rssUrl as rssUrl, u.profileImageAddress as profileImageAddress from User u where rssUrl is not null")
+    @Query("select u.id as id, u.rssUrl as rssUrl, u.profileImageAddress as profileImageAddress, u.title as title from User u where rssUrl is not null")
     List<UserRssUpdateDto> rssUpdateList();
 
     @Modifying

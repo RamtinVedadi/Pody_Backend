@@ -31,7 +31,7 @@ public abstract class AbstractModelUser implements Serializable {
     @Column
     private String address;
 
-    @Column(length = 65535,columnDefinition="Text")
+    @Column(length = 65535, columnDefinition = "Text")
     private String profileImageAddress;
 
     @Column
@@ -46,7 +46,7 @@ public abstract class AbstractModelUser implements Serializable {
     @Column
     private Boolean deleteFlag = false;//0 is not delete and 1 is deleted
 
-    @Column
+    @Column(length = 65535, columnDefinition = "Text")
     private String bio;
 
     public abstract List<ValidationError> validate();

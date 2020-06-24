@@ -8,4 +8,6 @@ public interface UserRssUpdateDto {
     String getRssUrl();
 
     String getProfileImageAddress();
+
+    String getTitle();
 }
