@@ -1001,7 +1001,11 @@ public class PodcastManagerImpl implements PodcastManager {
                         //Bio
                         try {
                             String bio = element.getElementsByTagName("description").item(0).getTextContent();
-                            creatingUser.setBio(bio);
+                            if (bio.length() > 255) {
+                                creatingUser.setBio(bio.substring(0, 255));
+                            } else {
+                                creatingUser.setBio(bio);
+                            }
                         } catch (NullPointerException e) {
                             creatingUser.setBio("");
                         }
