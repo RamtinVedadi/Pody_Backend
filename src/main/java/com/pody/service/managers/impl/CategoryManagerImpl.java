@@ -268,7 +268,10 @@ public class CategoryManagerImpl implements CategoryManager {
                 CategoryInfoDto cid = new CategoryInfoDto();
                 Category category = categoryRepository.getOne(dto.getId());
                 if (category != null) {
-                    cid.setCategoryInfo(category);
+                    cid.setId(category.getId());
+                    cid.setName(category.getName());
+                    cid.setDescription(category.getDescription());
+                    cid.setImageAddress(category.getImageAddress());
                 } else {
                     return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
