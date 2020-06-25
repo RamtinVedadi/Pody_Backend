@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,6 +49,12 @@ public abstract class AbstractModelUser implements Serializable {
 
     @Column(length = 65535, columnDefinition = "Text")
     private String bio;
+
+    @Column(nullable = true)
+    private Date createdDate;
+
+    @Column
+    private Date updateDate;
 
     public abstract List<ValidationError> validate();
 }

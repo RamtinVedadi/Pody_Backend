@@ -2,6 +2,7 @@ package com.pody.repository;
 
 import com.pody.dto.repositories.PodcastListDto;
 import com.pody.dto.repositories.PodcastReadDto;
+import com.pody.dto.repositories.PodcastSitemapDto;
 import com.pody.dto.repositories.PodcastTrendingDto;
 import com.pody.model.Podcast;
 import com.pody.model.User;
@@ -204,8 +205,14 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " where p.user.id = :userId")
     List<PodcastListDto> listPodcastEachUser(@Param("userId") UUID id, Pageable pageable);
 
+    @Query("select p.id as id, p.createdDate as createdDate from Podcast p ")
+    List<PodcastSitemapDto> listPodcastsSitemap(Pageable pageable);
+
     @Query("select count(p.id) from Podcast p where p.user.id = :userId")
     Integer channelEpisodeCount(@Param("userId") UUID id);
+
+    @Query("select count(p.id) from Podcast p")
+    Integer countEpisodes();
 
     @Modifying
     @Query("update Podcast p set p.imageAddress = :imagePath where p.id = :id")

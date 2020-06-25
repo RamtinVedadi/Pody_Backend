@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -79,6 +80,9 @@ public class LoginManagerImpl implements LoginManager {
 
                 u.setPassword(hashedPassword);
 
+                u.setCreatedDate(new Date());
+                u.setUpdateDate(new Date());
+
                 User registeredUser = userRepository.save(u);
                 LoginResultResponseDto result = modelMapper.map(registeredUser, LoginResultResponseDto.class);
 
@@ -98,6 +102,9 @@ public class LoginManagerImpl implements LoginManager {
                 User u = new User();
                 UserSignUpWithPhoneDto dto = new UserSignUpWithPhoneDto();
                 u.setUsername(phoneNumber);
+
+                u.setCreatedDate(new Date());
+                u.setUpdateDate(new Date());
 
                 User result = userRepository.save(u);
                 dto.setId(result.getId());

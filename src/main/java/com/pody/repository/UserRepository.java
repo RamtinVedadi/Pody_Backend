@@ -1,9 +1,6 @@
 package com.pody.repository;
 
-import com.pody.dto.repositories.ChannelsListDto;
-import com.pody.dto.repositories.ChannelsPageDto;
-import com.pody.dto.repositories.UserRssUpdateDto;
-import com.pody.dto.repositories.UserSearchDto;
+import com.pody.dto.repositories.*;
 import com.pody.model.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,8 +45,8 @@ public interface UserRepository extends AbstractRepository<User, UUID> {
     int updateChannelImage(@Param("imagePath") String imagePath, @Param("id") UUID id);
 
     @Modifying
-    @Query("update User u set u.password = :password where u.id = :id")
-    int resetPassword(@Param("password") String password, @Param("id") UUID id);
+    @Query("update User u set u.password = :password, u.updateDate = :updateDate where u.id = :id")
+    int resetPassword(@Param("password") String password, @Param("updateDate") Date date, @Param("id") UUID id);
 
     @Modifying
     @Query("update User u set u.rssUrl = :url where u.id = :id")
@@ -118,4 +116,7 @@ public interface UserRepository extends AbstractRepository<User, UUID> {
             " case when uf.id is null  THEN 'False' ELSE 'True' END AS hasFollowed " +
             " from User u inner join UserFollow uf on u.id = uf.follower.id where u.id = :userId")
     List<ChannelsListDto> listHomePageUsersWithFollowed(@Param("userId") UUID userId, Pageable pageable);//this user id is id of signed in user
+
+    @Query("select u.id as id, u.updateDate as createdDate from User u where u.isChannel = true ")
+    List<UserSitemapDto> listUserSitemap();//this user id is id of signed in user
 }

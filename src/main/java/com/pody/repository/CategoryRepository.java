@@ -1,6 +1,7 @@
 package com.pody.repository;
 
 import com.pody.dto.repositories.CategorySearchDto;
+import com.pody.dto.repositories.CategorySitemapDto;
 import com.pody.model.Category;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,10 +39,8 @@ public interface CategoryRepository extends AbstractRepository<Category, UUID> {
     @Query("select new Category(c.id, c.name, c.imageAddress) from Category c where c.parent.id  = :id ")
     List<Category> listCategoryChildren(@Param("id") UUID id);
 
-    @Modifying
-    @Query("update Category c set c.imageAddress = :icon where c.id = :id ")
-    int uploadCategoryIcon(@Param("icon") String icon, @Param("id") UUID id);
-
+    @Query("select c.id as id, c.createdDate as createdDate from Category c where c.parent.id  is null ")
+    List<CategorySitemapDto> listCategorySitemap(Pageable pageable);
 
     Category findOneByEnglishName(String englishName);
 }

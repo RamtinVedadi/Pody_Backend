@@ -118,6 +118,8 @@ public class CategoryManagerImpl implements CategoryManager {
                             } else {
                                 category.setParent(null);
                             }
+                        } else {
+                            category.setParent(null);
                         }
                     } else {
                         if (dbCategory.getParent().getId() != null) {

@@ -1071,6 +1071,8 @@ public class PodcastManagerImpl implements PodcastManager {
                         creatingUser.setRssUrl(dto.getStringValue());
                         //Is Channel
                         creatingUser.setIsChannel(true);
+                        creatingUser.setCreatedDate(new Date());
+                        creatingUser.setUpdateDate(new Date());
                     }
 
                     User podcasterDetail = userRepository.save(creatingUser);

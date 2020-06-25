@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -105,6 +106,7 @@ public class UserManagerImpl implements UserManager {
                 if (user != null) {
                     User dbUser = userRepository.findOneById(id);
                     modelMapper.map(user, dbUser);
+                    dbUser.setUpdateDate(new Date());
                     User result = userRepository.save(dbUser);
                     if (result != null) {
                         return ResponseEntity.ok(result);
@@ -253,7 +255,7 @@ public class UserManagerImpl implements UserManager {
                 byte[] hashedBytes = encoding.hashPassword(passwordChars, saltBytes, iterations, keyLength);
                 String hashedPassword = Hex.encodeHexString(hashedBytes);
 
-                int result = userRepository.resetPassword(hashedPassword, dto.getId());
+                int result = userRepository.resetPassword(hashedPassword, new Date(), dto.getId());
                 if (result == 1) {
                     return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
                 } else {

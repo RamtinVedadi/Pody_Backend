@@ -108,6 +108,12 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.dfabulich</groupId>
+            <artifactId>sitemapgen4j</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+
         <!--<dependency>-->
             <!--<groupId>org.apache.tika</groupId>-->
             <!--<artifactId>tika-core</artifactId>-->
