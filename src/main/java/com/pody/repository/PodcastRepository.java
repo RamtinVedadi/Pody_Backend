@@ -107,7 +107,7 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " where uf.user.id = :userId ")
     List<PodcastListDto> listFollowingPodcastersInfinite(@Param("userId") UUID userId, Pageable pageable);//One Month Data
 
-    @Query("select distinct  p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
+    @Query("select distinct p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
             " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
             " p.viewCount as viewCount , p.likeCount as likeCount, p.duration as duration, u.id as userId," +
             " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
