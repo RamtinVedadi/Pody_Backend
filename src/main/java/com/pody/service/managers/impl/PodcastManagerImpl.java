@@ -938,6 +938,25 @@ public class PodcastManagerImpl implements PodcastManager {
                 hpld.setUsers(finalUsers);
             }
 
+            Random rand = new Random();
+            int upperbound = listParents.size();
+            List<CategoryInfoDto> categoryIntroduction = new ArrayList<>();
+
+            Collections.shuffle(listParents);
+            for (int i = 0; i < 5; i++) {
+                CategoryParentDto cpd = listParents.get(i);
+                CategoryInfoDto cid = new CategoryInfoDto();
+                cid.setId(cpd.getId());
+                cid.setName(cpd.getName());
+                cid.setDescription(cpd.getDescription());
+                cid.setImageAddress(cpd.getImageAddress());
+                String[] orderby = {"viewCount", "likeCount"};
+                List<PodcastListDto> podcasts = podcastRepository.listTopPodcastsEachCategory(cpd.getId(), PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, orderby)));
+                cid.setPodcasts(podcasts);
+                categoryIntroduction.add(cid);
+            }
+            hpld.setCategoryIntroduction(categoryIntroduction);
+
             return ResponseEntity.ok(hpld);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
