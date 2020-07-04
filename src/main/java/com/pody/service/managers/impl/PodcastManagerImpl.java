@@ -832,9 +832,8 @@ public class PodcastManagerImpl implements PodcastManager {
             HomePageListDto hpld = new HomePageListDto();
 
             //Categories section
-            List<Category> listParents = categoryRepository.listCategoryParents(Sort.by(Sort.Direction.ASC, "name"));
-            List<CategoryParentListDto> categories = listParents.stream().map(c -> modelMapper.map(c, CategoryParentListDto.class)).collect(Collectors.toList());
-            hpld.setCategories(categories);
+            List<CategoryParentDto> listParents = categoryRepository.listCategoryParents(Sort.by(Sort.Direction.ASC, "name"));
+            hpld.setCategories(listParents);
 
             //Podcasts section
             Calendar date = Calendar.getInstance();
@@ -1299,9 +1298,8 @@ public class PodcastManagerImpl implements PodcastManager {
             HomeMobileListDto hpld = new HomeMobileListDto();
 
             //Categories section
-            List<Category> listParents = categoryRepository.listCategoryParents(Sort.by(Sort.Direction.ASC, "name"));
-            List<CategoryParentListDto> categories = listParents.stream().map(c -> modelMapper.map(c, CategoryParentListDto.class)).collect(Collectors.toList());
-            hpld.setCategories(categories);
+            List<CategoryParentDto> listParents = categoryRepository.listCategoryParents(Sort.by(Sort.Direction.ASC, "name"));
+            hpld.setCategories(listParents);
 
 
             //Podcasts section

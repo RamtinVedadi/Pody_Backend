@@ -1,5 +1,6 @@
 package com.pody.service.managers.impl;
 
+import com.pody.dto.repositories.CategoryParentDto;
 import com.pody.dto.repositories.CategoryParentListDto;
 import com.pody.dto.repositories.CategorySearchDto;
 import com.pody.dto.repositories.PodcastListDto;
@@ -183,9 +184,8 @@ public class CategoryManagerImpl implements CategoryManager {
     @Override //Tested
     public ResponseEntity listParents() {
         try {
-            List<Category> listParents = categoryRepository.listCategoryParents(Sort.by(Sort.Direction.ASC, "name"));
-            List<CategoryParentListDto> list = listParents.stream().map(c -> modelMapper.map(c, CategoryParentListDto.class)).collect(Collectors.toList());
-            return ResponseEntity.ok(list);
+            List<CategoryParentDto> listParents = categoryRepository.listCategoryParents(Sort.by(Sort.Direction.ASC, "name"));
+            return ResponseEntity.ok(listParents);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -210,10 +210,10 @@ public class CategoryManagerImpl implements CategoryManager {
     public ResponseEntity listAllCategoryPage(IdResponseDto dto) {
         //This id is logined user id
         try {
-            List<Category> listParents = categoryRepository.listCategoryParents(Sort.by(Sort.Direction.ASC, "name"));
+            List<CategoryParentDto> listParents = categoryRepository.listCategoryParents(Sort.by(Sort.Direction.ASC, "name"));
             List<CategoryReadResultDto> finalList = new ArrayList<>();
 
-            for (Category c : listParents) {
+            for (CategoryParentDto c : listParents) {
                 CategoryReadResultDto crrd = new CategoryReadResultDto();
 
                 Category categoryInfo = categoryRepository.findOneById(c.getId());

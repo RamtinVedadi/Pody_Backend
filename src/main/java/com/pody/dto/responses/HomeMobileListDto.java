@@ -1,9 +1,7 @@
 package com.pody.dto.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.pody.dto.repositories.CategoryParentListDto;
-import com.pody.dto.repositories.ChannelsListDto;
-import com.pody.dto.repositories.NewsListDto;
+import com.pody.dto.repositories.*;
 import com.pody.dto.repositories.PodcastListDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class HomeMobileListDto {
     @JsonProperty("categories")
-    List<CategoryParentListDto> categories;
+    List<CategoryParentDto> categories;
 
     @JsonProperty("partOne")
     List<PodcastListDto> partOnePodcasts;

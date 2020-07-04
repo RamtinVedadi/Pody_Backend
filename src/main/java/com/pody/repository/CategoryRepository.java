@@ -1,5 +1,6 @@
 package com.pody.repository;
 
+import com.pody.dto.repositories.CategoryParentDto;
 import com.pody.dto.repositories.CategorySearchDto;
 import com.pody.dto.repositories.CategorySitemapDto;
 import com.pody.model.Category;
@@ -28,8 +29,8 @@ public interface CategoryRepository extends AbstractRepository<Category, UUID> {
             " from Category c inner join CategoryFollow cf on c.id = cf.category.id where cf.follower.id = :userId")
     List<CategorySearchDto> followingCategoryList(@Param("userId") UUID userId);
 
-    @Query("select new Category(c.id, c.name, c.imageAddress) from Category c where c.parent.id is null ")
-    List<Category> listCategoryParents(Sort sort);
+    @Query("select c.id as id, c.name as name, c.imageAddress as imageAddress, c.description as description from Category c where c.parent.id is null ")
+    List<CategoryParentDto> listCategoryParents(Sort sort);
 
     @Query("select distinct c.id as id, c.name as name, c.imageAddress as imageAddress " +
             " from Category c inner join PodcastCategory pc on c.id = pc.category.id " +
