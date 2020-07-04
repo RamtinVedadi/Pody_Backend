@@ -951,7 +951,7 @@ public class PodcastManagerImpl implements PodcastManager {
                 cid.setDescription(cpd.getDescription());
                 cid.setImageAddress(cpd.getImageAddress());
                 String[] orderby = {"viewCount", "likeCount"};
-                List<PodcastListDto> podcasts = podcastRepository.listTopPodcastsEachCategory(cpd.getId(), PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, orderby)));
+                List<PodcastListDto> podcasts = podcastRepository.listTopPodcastsEachCategory(cpd.getId(), PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, orderby)));
                 cid.setPodcasts(podcasts);
                 categoryIntroduction.add(cid);
             }
