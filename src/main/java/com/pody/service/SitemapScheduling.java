@@ -162,6 +162,7 @@ public class SitemapScheduling {
             }
             finalList.add("http://pody.ir/sitemap/category.xml");
             finalList.add("http://pody.ir/sitemap/publishers.xml");
+            finalList.add("http://pody.ir/sitemap/blog.xml");
 
             for (String str : finalList) {
                 SitemapIndexUrl siu = new SitemapIndexUrl(str, new Date());
