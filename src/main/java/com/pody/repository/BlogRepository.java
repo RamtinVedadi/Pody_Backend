@@ -2,6 +2,7 @@ package com.pody.repository;
 
 import com.pody.dto.repositories.BlogListDto;
 import com.pody.dto.repositories.BlogReadDto;
+import com.pody.dto.repositories.CategorySitemapDto;
 import com.pody.dto.repositories.PodcastListDto;
 import com.pody.model.Blog;
 import org.springframework.data.domain.Pageable;
@@ -43,4 +44,7 @@ public interface BlogRepository extends AbstractRepository<Blog, UUID> {
             " u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress " +
             " from Blog b inner join User u on b.user.id = u.id where b.id = :blogId ")
     BlogReadDto readBlog(@Param("blogId") UUID blogId);
+
+    @Query("select c.id as id, c.createdDate as createdDate from Blog b ")
+    List<CategorySitemapDto> listBlogSitemap(Pageable pageable);
 }

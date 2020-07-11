@@ -3,12 +3,12 @@ package com.pody.service;
 import com.pody.dto.repositories.CategorySitemapDto;
 import com.pody.dto.repositories.PodcastSitemapDto;
 import com.pody.dto.repositories.UserSitemapDto;
+import com.pody.repository.BlogRepository;
 import com.pody.repository.CategoryRepository;
 import com.pody.repository.PodcastRepository;
 import com.pody.repository.UserRepository;
 import com.redfin.sitemapgenerator.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,12 +27,14 @@ public class SitemapScheduling {
     private CategoryRepository categoryRepository;
     private PodcastRepository podcastRepository;
     private UserRepository userRepository;
+    private BlogRepository blogRepository;
 
     @Autowired
-    public SitemapScheduling(CategoryRepository categoryRepository, PodcastRepository podcastRepository, UserRepository userRepository) {
+    public SitemapScheduling(CategoryRepository categoryRepository, PodcastRepository podcastRepository, UserRepository userRepository, BlogRepository blogRepository) {
         this.categoryRepository = categoryRepository;
         this.podcastRepository = podcastRepository;
         this.userRepository = userRepository;
+        this.blogRepository = blogRepository;
     }
 
     private static final String WEB_PAGE_URL = "http://pody.ir";
@@ -78,6 +80,30 @@ public class SitemapScheduling {
             List<CategorySitemapDto> categories = categoryRepository.listCategorySitemap(PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "createdDate")));
             for (CategorySitemapDto csd : categories) {
                 WebSitemapUrl sitemapUrl = new WebSitemapUrl.Options("http://pody.ir/categoryPage/" + csd.getId()).lastMod(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(csd.getCreatedDate())).priority(priority)
+                        .changeFreq(changeFrequency).build();
+
+                webSitemapGenerator.addUrl(sitemapUrl);
+            }
+
+            webSitemapGenerator.write();
+
+        } catch (MalformedURLException | ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Scheduled(cron = "0 22 17 ? * *", zone = "Asia/Tehran")
+    public void SitemapBlogUpdate() {
+        try {
+            WebSitemapGenerator webSitemapGenerator = WebSitemapGenerator.builder(WEB_PAGE_URL, new File(LOCAL_FOLDER_PATH)).fileNamePrefix("blog")
+                    .build();
+
+            double priority = 0.8;
+            ChangeFreq changeFrequency = ChangeFreq.MONTHLY;
+
+            List<CategorySitemapDto> blogs = blogRepository.listBlogSitemap(PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "createdDate")));
+            for (CategorySitemapDto csd : blogs) {
+                WebSitemapUrl sitemapUrl = new WebSitemapUrl.Options("http://pody.ir/blog/" + csd.getId()).lastMod(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(csd.getCreatedDate())).priority(priority)
                         .changeFreq(changeFrequency).build();
 
                 webSitemapGenerator.addUrl(sitemapUrl);
