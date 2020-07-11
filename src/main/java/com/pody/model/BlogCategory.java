@@ -9,11 +9,11 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
-public class CategoryFollow {
+public class BlogCategory {
     @Id
     @Column(length = 16)
     @GeneratedValue(generator = "system-uuid")
@@ -21,12 +21,11 @@ public class CategoryFollow {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private Category category; //category id
+    private Blog blog;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private User follower; //user id which want to follow the category
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    private Category category;
 
-    public CategoryFollow(UUID id) {
-        this.id = id;
-    }
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    private Category subCategory;
 }

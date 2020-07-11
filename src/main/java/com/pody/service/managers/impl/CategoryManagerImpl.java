@@ -195,9 +195,8 @@ public class CategoryManagerImpl implements CategoryManager {
     public ResponseEntity listChildren(UUID id) {
         try {
             if (id != null) {
-                List<Category> listChildren = categoryRepository.listCategoryChildren(id);
-                List<CategorySearchDto> list = listChildren.stream().map(c -> modelMapper.map(c, CategorySearchDto.class)).collect(Collectors.toList());
-                return ResponseEntity.ok(list);
+                List<CategorySearchDto> listChildren = categoryRepository.listCategoryChildren(id);
+                return ResponseEntity.ok(listChildren);
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
             }

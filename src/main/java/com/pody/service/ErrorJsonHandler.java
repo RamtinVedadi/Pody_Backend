@@ -15,4 +15,5 @@ public class ErrorJsonHandler {
     public static final String DUPLICATE_USERNAME = "{\"message\":\"DUPLICATE_USERNAME\"}";
     public static final String OK_EMAIL = "{\"message\":\"OK_EMAIL\"}";
     public static final String OK_USERNAME = "{\"message\":\"OK_USERNAME\"}";
+    public static final String PROBLEM = "{\"message\":\"PROBLEM\"}";
 }

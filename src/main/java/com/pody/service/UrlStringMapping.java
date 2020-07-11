@@ -53,7 +53,6 @@ public class UrlStringMapping {
     public static final String URL0066 = "/api/podcast/list/followings/{till}/{to}";//Post لیست پادکست پادکسترهای دنبال شده
     public static final String URL0067 = "/api/podcast/list/home/mobile";//Post
     public static final String URL0068 = "/api/podcast/list/home/mobile/infinite/{till}/{to}";//Post
-
     //category urls
     public static final String URL0110 = "/api/admin/category/create";//POST
     public static final String URL0111 = "/api/admin/category/update/{id}";//PUT
@@ -84,11 +83,22 @@ public class UrlStringMapping {
     //hashtag urls
     public static final String URL0180 = "/api/hashtag/create";//POST
     public static final String URL0181 = "/api/admin/hashtag/delete/{id}";//DELETE
-
     //news urls
     public static final String URL0200 = "/api/news/create";//POST
     public static final String URL0201 = "/api/news/update/{id}";//PUT
     public static final String URL0202 = "/api/news/delete/{id}";//DELETE
     public static final String URL0203 = "/api/news/list/homePage";//GET
     public static final String URL0204 = "/api/news/list";//GET
+    //blog urls
+    public static final String URL0250 = "/api/blog/create";//POST
+    public static final String URL0251 = "/api/blog/{id}/image/upload";//POST
+    public static final String URL0252 = "/api/blog/isPublish/{id}";//GET
+    public static final String URL0253 = "/api/blog/list/{page}/{size}";//POST
+    public static final String URL0254 = "/api/blog/like";//POST
+    public static final String URL0255 = "/api/blog/dislike";//POST
+    public static final String URL0256 = "/api/blog/view";//POST
+    public static final String URL0257 = "/api/blog/update/{id}";//PUT
+    public static final String URL0258 = "/api/blog/read";//POST
+    public static final String URL0259 = "/api/blog/list/like/{id}/user";//GET
+    public static final String URL0260 = "/api/blog/readLater";//POST
 }

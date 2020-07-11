@@ -128,6 +128,14 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " where p.id = :id")
     PodcastReadDto readPodcast(@Param("id") UUID id);
 
+    @Query("select distinct p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.description as description," +
+            " p.createdDate as createdDate, p.duration as duration, p.viewCount as viewCount , p.likeCount as likeCount," +
+            " u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
+            " from Podcast p inner join User u on p.user.id = u.id " +
+            " where p.id = :id")
+    PodcastReadDto readPodcastUpload(@Param("id") UUID id);
+
     @Query("select distinct  p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
             " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber, p.shortDescription as shortDescription," +
             " p.duration as duration, p.viewCount as viewCount , p.likeCount as likeCount, u.id as userId," +
@@ -219,8 +227,8 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
     int updateImageAddress(@Param("imagePath") String imagePath, @Param("id") UUID id);
 
     @Modifying
-    @Query("update Podcast p set p.audioAddress= :audioPath where p.id = :id")
-    int updateAudioAddress(@Param("audioPath") String audioPath, @Param("id") UUID id);
+    @Query("update Podcast p set p.audioAddress= :audioPath, p.duration = :duration where p.id = :id")
+    int updateAudioAddress(@Param("audioPath") String audioPath, @Param("duration") String duration, @Param("id") UUID id);
 
     Podcast findOneByTitleAndUser(String title, User user);
 

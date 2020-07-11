@@ -1,32 +1,38 @@
 package com.pody.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
-public class CategoryFollow {
+public class BlogLike {
     @Id
-    @Column(length = 16)
+    @Column(columnDefinition = "binary(16)")
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private Category category; //category id
+    private Blog blog;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private User follower; //user id which want to follow the category
+    private User user;
 
-    public CategoryFollow(UUID id) {
+    @Column
+    private Date createdDate;
+
+    public BlogLike(UUID id) {
         this.id = id;
     }
 }

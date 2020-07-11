@@ -18,7 +18,7 @@ public class Podcast extends AbstractModel {
     @Column(length = 150)
     private String shortDescription;
 
-    @Column(length = 65535,columnDefinition="Text")
+    @Column(length = 65535, columnDefinition = "Text")
     private String description;
 
     @Column
@@ -30,7 +30,7 @@ public class Podcast extends AbstractModel {
     @Column
     private int viewCount = 0;
 
-    @Column(nullable = true, length = 65535,columnDefinition="Text")
+    @Column(nullable = true, length = 65535, columnDefinition = "Text")
     private String audioAddress;
 
     @Column
@@ -44,6 +44,9 @@ public class Podcast extends AbstractModel {
 
     @Column(nullable = true)
     private Integer seasonNumber;
+
+    @Column(nullable = true)
+    private Boolean isPublish = false;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;

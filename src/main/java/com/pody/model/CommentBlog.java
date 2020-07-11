@@ -6,14 +6,15 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
-public class CategoryFollow {
+public class CommentBlog {
     @Id
     @Column(length = 16)
     @GeneratedValue(generator = "system-uuid")
@@ -21,12 +22,20 @@ public class CategoryFollow {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private Category category; //category id
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private User follower; //user id which want to follow the category
+    private Blog blog;
 
-    public CategoryFollow(UUID id) {
-        this.id = id;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Comment parent;
+
+    @Column(nullable = false)
+    private int likeCount = 0;
+
+    @Column(nullable = true)
+    private Date createdDate;
+
+    @Column
+    private Boolean isApprove = false;
 }

@@ -37,8 +37,8 @@ public interface CategoryRepository extends AbstractRepository<Category, UUID> {
             " inner join Podcast p on pc.podcast.id = p.id ")
     List<CategorySearchDto> listTrendingCategory(Pageable pageable);
 
-    @Query("select new Category(c.id, c.name, c.imageAddress) from Category c where c.parent.id  = :id ")
-    List<Category> listCategoryChildren(@Param("id") UUID id);
+    @Query("select c.id as id, c.name as name, c.imageAddress as imageAddress from Category c where c.parent.id  = :id ")
+    List<CategorySearchDto> listCategoryChildren(@Param("id") UUID id);
 
     @Query("select c.id as id, c.createdDate as createdDate from Category c where c.parent.id  is null ")
     List<CategorySitemapDto> listCategorySitemap(Pageable pageable);

@@ -29,4 +29,7 @@ public class News extends AbstractModel {
 
     @Column
     private int disLikeCount = 0;
+
+    @Column
+    private Boolean isPublish = false;
 }

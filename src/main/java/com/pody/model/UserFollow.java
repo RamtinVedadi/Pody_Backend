@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table
 public class UserFollow {

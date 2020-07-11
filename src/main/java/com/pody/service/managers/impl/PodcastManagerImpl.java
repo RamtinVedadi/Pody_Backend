@@ -1,54 +1,71 @@
 package com.pody.service.managers.impl;
 
-import com.pody.dto.repositories.*;
-import com.pody.dto.repositories.PodcastListDto;
-import com.pody.dto.requests.PodcastCreateDto;
-import com.pody.dto.requests.RssDataDto;
-import com.pody.dto.requests.StringRequestDto;
-import com.pody.dto.requests.TwoIDRequestDto;
-import com.pody.dto.responses.*;
-import com.pody.model.*;
-import com.pody.repository.*;
-import com.pody.service.ErrorJsonHandler;
-import com.pody.service.PasswordEncoding;
-import com.pody.service.managers.PodcastManager;
-import org.apache.commons.codec.binary.Hex;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.net.InetAddress;
+import java.util.*;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+
+import com.pody.model.*;
+import org.w3c.dom.Node;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.Files;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
+import java.net.InetAddress;
+
+import com.pody.repository.*;
+
+import java.net.URLConnection;
+
+import com.pody.dto.responses.*;
+import org.xml.sax.SAXException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+
+import com.pody.dto.repositories.*;
+import org.modelmapper.ModelMapper;
+
+import java.nio.file.StandardCopyOption;
+
+import com.pody.dto.requests.RssDataDto;
+import com.pody.service.ErrorJsonHandler;
+import com.pody.service.PasswordEncoding;
+
+import javax.xml.parsers.DocumentBuilder;
+
+import org.springframework.http.HttpStatus;
+import org.apache.commons.codec.binary.Hex;
+import org.springframework.util.StringUtils;
+import org.springframework.data.domain.Sort;
+import com.pody.dto.requests.TwoIDRequestDto;
+import com.pody.dto.requests.PodcastCreateDto;
+import com.pody.dto.requests.StringRequestDto;
+import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import com.pody.dto.repositories.PodcastListDto;
+import com.pody.service.managers.PodcastManager;
+import org.springframework.data.domain.PageRequest;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import static java.util.stream.Collectors.toCollection;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
+
+import sun.audio.AudioStream;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -153,6 +170,9 @@ public class PodcastManagerImpl implements PodcastManager {
 
                         if (result != null) {
                             dto.getPodcastCategory().setPodcast(result);
+                            if (dto.getPodcastCategory().getSubCategory().getId() == null) {
+                                dto.getPodcastCategory().setSubCategory(null);
+                            }
                         }
                         PodcastCategory categoryResults = podcastCategoryRepository.save(dto.getPodcastCategory());
 
@@ -305,7 +325,7 @@ public class PodcastManagerImpl implements PodcastManager {
                                 .get("C:/xampp/htdocs/coverImages" + File.separator + StringUtils.cleanPath(podcastId.toString() + ".jpg"));
                         Files.copy(image.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
                         InetAddress ip = InetAddress.getLocalHost();
-                        filePath = "http://192.168.100.10/coverImages/" + StringUtils.cleanPath(podcastId.toString() + ".jpg");
+                        filePath = "http://loacalhost/coverImages/" + StringUtils.cleanPath(podcastId.toString() + ".jpg");
                     } catch (IOException e) {
                         return new ResponseEntity(ErrorJsonHandler.IO_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
                     }
@@ -315,21 +335,28 @@ public class PodcastManagerImpl implements PodcastManager {
                     int resultAudio = 0;
                     if (audio != null) {
                         String filePathAudio = "";
+                        String audioDuration = "";
+                        Path copyLocation;
                         try {
-                            Path copyLocation = Paths
+                            copyLocation = Paths
                                     .get("C:/xampp/htdocs/podcast" + File.separator + StringUtils.cleanPath(podcastId.toString() + ".mp3"));
                             Files.copy(audio.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
-                            filePathAudio = "http://192.168.100.10/podcast/" + StringUtils.cleanPath(podcastId.toString() + ".mp3");
+                            filePathAudio = "http://localhost/podcast/" + StringUtils.cleanPath(podcastId.toString() + ".mp3");
                         } catch (IOException e) {
                             return new ResponseEntity(ErrorJsonHandler.IO_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
                         }
-                        resultAudio = podcastRepository.updateAudioAddress(filePathAudio, podcastId);
+                        //Duration Calculator
+
+                        audioDuration = String.valueOf(audio.getSize());
+
+                        resultAudio = podcastRepository.updateAudioAddress(filePathAudio, audioDuration, podcastId);
                     } else {
                         return new ResponseEntity(ErrorJsonHandler.EMPTY_FILE, HttpStatus.BAD_REQUEST);
                     }
 
                     if (resultImage == 1 && resultAudio == 1) {
-                        return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                        PodcastReadDto finalPodcast = podcastRepository.readPodcastUpload(podcastId);
+                        return ResponseEntity.ok(finalPodcast);
                     } else {
                         return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
                     }
