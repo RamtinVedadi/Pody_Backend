@@ -24,7 +24,7 @@ public class Blog {
     @Column(length = 65535, columnDefinition = "Text")
     private String description;
 
-    @Column(length = 200)
+    @Column(length = 300)
     private String shortDescription;
 
     @Column

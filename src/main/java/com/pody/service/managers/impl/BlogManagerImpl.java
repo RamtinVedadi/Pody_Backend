@@ -110,11 +110,15 @@ public class BlogManagerImpl implements BlogManager {
                 BlogReadDto blogInfo = blogRepository.readBlog(dto.getFirstID());
                 brrd.setBlogInfo(blogInfo);
 
-                UserFollow isAvailable = userFollowRepository.isUserFollowAvailable(dto.getSecondID(), blogInfo.getUserId());
-                if (isAvailable == null) {
-                    brrd.setUserFollow(false);
+                if (dto.getSecondID() != null) {
+                    UserFollow isAvailable = userFollowRepository.isUserFollowAvailable(dto.getSecondID(), blogInfo.getUserId());
+                    if (isAvailable == null) {
+                        brrd.setUserFollow(false);
+                    } else {
+                        brrd.setUserFollow(true);
+                    }
                 } else {
-                    brrd.setUserFollow(true);
+                    brrd.setUserFollow(false);
                 }
                 List<PodcastListDto> lastPodcastOfUser = podcastRepository.listPodcastEachUser(blogInfo.getUserId(), PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createdDate")));
                 if (lastPodcastOfUser.size() > 0) {
