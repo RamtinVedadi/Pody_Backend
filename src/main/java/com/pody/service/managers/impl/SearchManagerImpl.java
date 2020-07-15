@@ -44,12 +44,12 @@ public class SearchManagerImpl implements SearchManager {
     public ResponseEntity searchForEverything(String searchString) {
         try {
             if (searchString != null) {
-                String search = "%" + searchString + "%";
+                String searchLowerCase = "%" + searchString.toLowerCase() + "%";
+                String searchUpperCase = "%" + searchString.toUpperCase() + "%";
 
-                List<UserSearchDto> users = userRepository.searchUsers(search);
-
-                List<CategorySearchDto> categories = categoryRepository.searchCategory(search);
-                List<PodcastListDto> podcasts = podcastRepository.searchPodcast(search, PageRequest.of(0, 24, Sort.by(Sort.Direction.DESC, "createdDate")));
+                List<UserSearchDto> users = userRepository.searchUsers(searchLowerCase, searchUpperCase);
+                List<CategorySearchDto> categories = categoryRepository.searchCategory(searchLowerCase, searchUpperCase);
+                List<PodcastListDto> podcasts = podcastRepository.searchPodcast(searchLowerCase, searchUpperCase, PageRequest.of(0, 24, Sort.by(Sort.Direction.DESC, "createdDate")));
 //                List<HashtagSearchDto> hashtags = hashtagRepository.searchHashtag(search);
 
                 SearchResponseDto result = new SearchResponseDto();

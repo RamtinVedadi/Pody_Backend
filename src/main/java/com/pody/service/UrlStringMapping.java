@@ -100,5 +100,7 @@ public class UrlStringMapping {
     public static final String URL0257 = "/api/blog/update/{id}";//PUT
     public static final String URL0258 = "/api/blog/read";//POST
     public static final String URL0259 = "/api/blog/list/like/{id}/user";//GET
-    public static final String URL0260 = "/api/blog/readLater";//POST
+    public static final String URL0260 = "/api/blog/bookmark";//POST
+    public static final String URL0261 = "/api/blog/unbookmark";//POST
+    public static final String URL0262 = "/api/blog/bookmark/check";//POST
 }

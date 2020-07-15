@@ -62,8 +62,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static java.util.stream.Collectors.collectingAndThen;
 
-import sun.audio.AudioStream;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +79,7 @@ public class PodcastManagerImpl implements PodcastManager {
     private HashtagRepository hashtagRepository;
     private HistoryRepository historyRepository;
     private CommentRepository commentRepository;
+    private BlogRepository blogRepository;
     private NewsRepository newsRepository;
     private UserRepository userRepository;
     private ModelMapper modelMapper;
@@ -90,7 +89,7 @@ public class PodcastManagerImpl implements PodcastManager {
                               UserCategoryRespository userCategoryRespository, ListenLaterRepository listenLaterRepository,
                               PodcastViewRepository podcastViewRepository, PodcastLikeRepository podcastLikeRepository, CategoryRepository categoryRepository,
                               PodcastRepository podcastRepository, HashtagRepository hashtagRepository,
-                              HistoryRepository historyRepository, CommentRepository commentRepository, NewsRepository newsRepository,
+                              HistoryRepository historyRepository, CommentRepository commentRepository, BlogRepository blogRepository, NewsRepository newsRepository,
                               UserRepository userRepository, ModelMapper modelMapper) {
         this.podcastCategoryRepository = podcastCategoryRepository;
         this.podcastHashtagRepository = podcastHashtagRepository;
@@ -103,6 +102,7 @@ public class PodcastManagerImpl implements PodcastManager {
         this.hashtagRepository = hashtagRepository;
         this.historyRepository = historyRepository;
         this.commentRepository = commentRepository;
+        this.blogRepository = blogRepository;
         this.newsRepository = newsRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
@@ -984,6 +984,9 @@ public class PodcastManagerImpl implements PodcastManager {
             }
             hpld.setCategoryIntroduction(categoryIntroduction);
 
+            List<BlogListDto> blogs = blogRepository.listBlogs(PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "createdDate")));
+            hpld.setBlogs(blogs);
+
             return ResponseEntity.ok(hpld);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -1493,7 +1496,7 @@ public class PodcastManagerImpl implements PodcastManager {
                 if (result == 1) {
                     return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
                 } else {
-                    return ResponseEntity.ok("NOT SUCCESSFUL");
+                    return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
                 }
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);

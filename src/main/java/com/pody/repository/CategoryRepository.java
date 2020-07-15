@@ -22,8 +22,9 @@ public interface CategoryRepository extends AbstractRepository<Category, UUID> {
     @Query("select distinct c.id as id, c.name as name, c.imageAddress as imageAddress " +
             " from Category c inner join UserCategory uc on c.id = uc.category.id " +
             " inner join User u on uc.user.id = u.id " +
-            " where c.name like :name or c.englishName like :name or u.username like :name or u.title like :name")
-    List<CategorySearchDto> searchCategory(@Param("name") String name);
+            " where c.name like :lowerCase or c.englishName like :lowerCase or u.username like :lowerCase or u.title like :lowerCase or " +
+            " c.name like :upperCase or c.englishName like :upperCase or u.username like :upperCase or u.title like :upperCase")
+    List<CategorySearchDto> searchCategory(@Param("lowerCase") String lowerCase, @Param("upperCase") String upperCase);
 
     @Query("select distinct c.id as id, c.name as name, c.imageAddress as imageAddress " +
             " from Category c inner join CategoryFollow cf on c.id = cf.category.id where cf.follower.id = :userId")

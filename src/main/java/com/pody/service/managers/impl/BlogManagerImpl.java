@@ -128,7 +128,36 @@ public class BlogManagerImpl implements BlogManager {
                     List<PodcastListDto> lastRandomPodcast = podcastRepository.listMostViewedAndLiked(PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, orderBy)));
                     brrd.setPodcast(lastRandomPodcast);
                 }
-                brrd.setSuggestionBlogs(null);
+
+                List<BlogListDto> sameCategory = blogRepository.blogSameCategory(blogInfo.getCategoryId(), blogInfo.getId(), PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate")));
+                if (sameCategory != null && sameCategory.size() > 0) {
+                    brrd.setSuggestionBlogs(sameCategory);
+                } else {
+                    List<BlogListDto> notSameCategory = blogRepository.listBlogsWithoutItSelf(blogInfo.getId(), PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate")));
+                    brrd.setSuggestionBlogs(notSameCategory);
+                }
+
+                if (dto.getSecondID() == null) {
+                    brrd.setIsBookmark(false);
+                } else {
+                    List<ReadLater> result = readLaterRepository.checkIsBookmark(dto.getSecondID(), dto.getFirstID());
+                    if (result != null && result.size() > 0) {
+                        brrd.setIsBookmark(true);
+                    } else {
+                        brrd.setIsBookmark(false);
+                    }
+                }
+
+                if (dto.getSecondID() == null) {
+                    brrd.setIsLike(false);
+                } else {
+                    List<BlogLike> result = blogLikeRepository.checkIsLike(dto.getSecondID(), dto.getFirstID());
+                    if (result != null && result.size() > 0) {
+                        brrd.setIsLike(true);
+                    } else {
+                        brrd.setIsLike(false);
+                    }
+                }
 
                 return ResponseEntity.ok(brrd);
             } else {
@@ -277,5 +306,69 @@ public class BlogManagerImpl implements BlogManager {
     @Override
     public ResponseEntity listLikedBlogEachUser(UUID userId) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity makeBlogBookmark(TwoIDRequestDto dto) {
+        try {
+            //first id is for blog id
+            //second id is for user logined in
+            if (dto != null) {
+                ReadLater rl = new ReadLater();
+                rl.setBlog(new Blog(dto.getFirstID()));
+                rl.setUser(new User(dto.getSecondID()));
+                rl.setCreatedDate(new Date());
+                ReadLater save = readLaterRepository.save(rl);
+                if (save != null) {
+                    return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                } else {
+                    return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
+                }
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity makeBlogUnBookmark(TwoIDRequestDto dto) {
+        try {
+            //first id is for blog id
+            //second id is for user logined in
+            if (dto != null) {
+                int result = readLaterRepository.deleteListenLater(dto.getSecondID(), dto.getFirstID());
+                if (result == 1) {
+                    return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                } else {
+                    return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
+                }
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity blogBookmarkCheck(TwoIDRequestDto dto) {
+        try {
+            //first id is for blog id
+            //second id is for user logined in
+            if (dto != null) {
+                List<ReadLater> result = readLaterRepository.checkIsBookmark(dto.getSecondID(), dto.getFirstID());
+                if (result != null && result.size() > 0) {
+                    return ResponseEntity.ok(ErrorJsonHandler.TRUE);
+                } else {
+                    return ResponseEntity.ok(ErrorJsonHandler.FALSE);
+                }
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

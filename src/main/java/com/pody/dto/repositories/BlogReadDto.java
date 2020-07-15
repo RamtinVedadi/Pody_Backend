@@ -26,4 +26,10 @@ public interface BlogReadDto {
     String getUserTitle();
 
     String getProfileImageAddress();
+
+    UUID getCategoryId();
+
+    String getCategoryName();
+
+    String getCategoryImage();
 }

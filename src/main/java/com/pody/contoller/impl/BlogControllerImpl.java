@@ -69,4 +69,19 @@ public class BlogControllerImpl implements BlogController {
     public ResponseEntity listLikedBlogEachUser(@PathVariable("id") UUID userId) {
         return blogManager.listLikedBlogEachUser(userId);
     }
+
+    @Override
+    public ResponseEntity makeBlogBookmark(@RequestBody TwoIDRequestDto dto) {
+        return blogManager.makeBlogBookmark(dto);
+    }
+
+    @Override
+    public ResponseEntity makeBlogUnBookmark(@RequestBody TwoIDRequestDto dto) {
+        return blogManager.makeBlogUnBookmark(dto);
+    }
+
+    @Override
+    public ResponseEntity blogBookmarkCheck(@RequestBody TwoIDRequestDto dto) {
+        return blogManager.blogBookmarkCheck(dto);
+    }
 }

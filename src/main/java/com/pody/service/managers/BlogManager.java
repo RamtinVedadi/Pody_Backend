@@ -29,4 +29,10 @@ public interface BlogManager {
     ResponseEntity viewUpdate(TwoIDRequestDto dto);
 
     ResponseEntity listLikedBlogEachUser(UUID userId);
+
+    ResponseEntity makeBlogBookmark(TwoIDRequestDto dto);
+
+    ResponseEntity makeBlogUnBookmark(TwoIDRequestDto dto);
+
+    ResponseEntity blogBookmarkCheck(TwoIDRequestDto dto);
 }

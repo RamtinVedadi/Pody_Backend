@@ -40,11 +40,28 @@ public interface BlogRepository extends AbstractRepository<Blog, UUID> {
     List<BlogListDto> listBlogs(Pageable pageable);
 
     @Query("select b.id as id, b.viewCount as viewCount, b.likeCount as likeCount, b.title as title," +
-            " b.createdDate as createdDate, b.imageAddress as blogImage, b.description as description," +
+            " b.createdDate as createdDate, b.imageAddress as blogImage, b.shortDescription as shortDescription," +
             " u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress " +
-            " from Blog b inner join User u on b.user.id = u.id where b.id = :blogId ")
+            " from Blog b inner join User u on b.user.id = u.id where not b.id = :blogId")
+    List<BlogListDto> listBlogsWithoutItSelf(@Param("blogId") UUID blogId, Pageable pageable);
+
+    @Query("select b.id as id, b.viewCount as viewCount, b.likeCount as likeCount, b.title as title," +
+            " b.createdDate as createdDate, b.imageAddress as blogImage, b.description as description," +
+            " u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress," +
+            " c.id as categoryId, c.name as categoryName, c.imageAddress as categoryImage " +
+            " from Blog b inner join User u on b.user.id = u.id " +
+            " inner join BlogCategory bc on b.id = bc.blog.id " +
+            " inner join Category c on bc.category.id = c.id " +
+            " where b.id = :blogId ")
     BlogReadDto readBlog(@Param("blogId") UUID blogId);
 
-    @Query("select c.id as id, c.createdDate as createdDate from Blog b ")
+    @Query("select b.id as id, b.viewCount as viewCount, b.likeCount as likeCount, b.title as title," +
+            " b.createdDate as createdDate, b.imageAddress as blogImage, b.description as description," +
+            " u.id as userId, u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress " +
+            " from Blog b inner join User u on b.user.id = u.id inner join BlogCategory bc on b.id = bc.blog.id " +
+            " where bc.category.id = :categoryId and not b.id = :blogId ")
+    List<BlogListDto> blogSameCategory(@Param("categoryId") UUID categoryId, @Param("blogId") UUID blogId, Pageable pageable);
+
+    @Query("select b.id as id, b.createdDate as createdDate from Blog b ")
     List<CategorySitemapDto> listBlogSitemap(Pageable pageable);
 }

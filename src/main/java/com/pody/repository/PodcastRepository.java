@@ -42,9 +42,11 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " from Podcast p inner join User u on p.user.id = u.id " +
             " inner join PodcastCategory pc on p.id = pc.podcast.id " +
             " inner join Category c on pc.category.id = c.id " +
-            " where p.title like :name or p.shortDescription like :name or p.description like :name or u.username like :name " +
-            " or u.title like :name or c.name like :name or c.englishName like :name ")
-    List<PodcastListDto> searchPodcast(@Param("name") String name, Pageable pageable);
+            " where p.title like :lowerCase or p.shortDescription like :lowerCase or p.description like :lowerCase or " +
+            " u.username like :lowerCase or u.title like :lowerCase or c.name like :lowerCase or c.englishName like :lowerCase or " +
+            " p.title like :upperCase or p.shortDescription like :upperCase or p.description like :upperCase or " +
+            " u.username like :upperCase or u.title like :upperCase or c.name like :upperCase or c.englishName like :upperCase ")
+    List<PodcastListDto> searchPodcast(@Param("lowerCase") String lowerCase, @Param("upperCase") String upperCase, Pageable pageable);
 
     @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
             " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +

@@ -15,6 +15,8 @@ import java.util.List;
 public class BlogReadResponseDto {
     private BlogReadDto blogInfo;
     private Boolean userFollow;
+    private Boolean isBookmark;
+    private Boolean isLike;
     private List<PodcastListDto> podcast;
     private List<BlogListDto> suggestionBlogs;
 }

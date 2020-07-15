@@ -29,8 +29,9 @@ public interface UserRepository extends AbstractRepository<User, UUID> {
     @Query("select distinct u.id as id, u.username as username, u.title as userTitle, u.profileImageAddress as imageAddress, u.followerCount as followerCount " +
             " from User u  inner join UserCategory uc on u.id = uc.user.id " +
             " inner join Category c on uc.category.id = c.id " +
-            " where u.username like :username or u.title like :username or c.name like :username or c.englishName like :username")
-    List<UserSearchDto> searchUsers(@Param("username") String username);
+            " where u.username like :lowerCase or u.title like :lowerCase or c.name like :lowerCase or c.englishName like :lowerCase or " +
+            " u.username like :upperCase or u.title like :upperCase or c.name like :upperCase or c.englishName like :upperCase")
+    List<UserSearchDto> searchUsers(@Param("lowerCase") String lowerCase, @Param("upperCase") String upperCase);
 
     @Modifying
     @Query("update User u set u.isPremium = 1 where u.id = :id")

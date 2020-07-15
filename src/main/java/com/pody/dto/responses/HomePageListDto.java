@@ -40,4 +40,6 @@ public class HomePageListDto {
     @JsonProperty("users")
     List<ChannelListenCountDto> users;
 
+    @JsonProperty("blogs")
+    List<BlogListDto> blogs;
 }

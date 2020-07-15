@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 public interface BlogController {
     @PostMapping(value = UrlStringMapping.URL0250, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
@@ -45,4 +46,13 @@ public interface BlogController {
 
     @GetMapping(value = UrlStringMapping.URL0259, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listLikedBlogEachUser(UUID userId);
+
+    @PostMapping(value = UrlStringMapping.URL0260, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity makeBlogBookmark(TwoIDRequestDto dto);
+
+    @PostMapping(value = UrlStringMapping.URL0261, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity makeBlogUnBookmark(TwoIDRequestDto dto);
+
+    @PostMapping(value = UrlStringMapping.URL0262, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity blogBookmarkCheck(TwoIDRequestDto dto);
 }
