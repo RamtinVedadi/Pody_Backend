@@ -1029,11 +1029,23 @@ public class PodcastManagerImpl implements PodcastManager {
                                     }
                                 }
                                 username = username.replaceAll("([/.@#$%^&*()<>|\\-])", "");
-                                User isUserAvailable = userRepository.findOneByUsername(username);
-                                if (isUserAvailable == null) {
-                                    creatingUser.setUsername(username);
+                                if (username == "") {
+                                    String author = element.getElementsByTagName("itunes:author").item(0).getTextContent();
+                                    String newUsername = author.replaceAll("\\s+", "");
+                                    username = newUsername;
+                                    User isUserAvailable = userRepository.findOneByUsername(username);
+                                    if (isUserAvailable == null) {
+                                        creatingUser.setUsername(username);
+                                    } else {
+                                        return ResponseEntity.ok(ErrorJsonHandler.DUPLICATE_USERNAME);
+                                    }
                                 } else {
-                                    return ResponseEntity.ok(ErrorJsonHandler.DUPLICATE_USERNAME);
+                                    User isUserAvailable = userRepository.findOneByUsername(username);
+                                    if (isUserAvailable == null) {
+                                        creatingUser.setUsername(username);
+                                    } else {
+                                        return ResponseEntity.ok(ErrorJsonHandler.DUPLICATE_USERNAME);
+                                    }
                                 }
                             }
                         } catch (NullPointerException e) {
