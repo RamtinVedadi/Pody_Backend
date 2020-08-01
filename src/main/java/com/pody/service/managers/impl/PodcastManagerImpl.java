@@ -4,6 +4,9 @@ import java.io.*;
 import java.util.*;
 import java.net.URL;
 
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import com.pody.model.*;
 import org.w3c.dom.Node;
 
@@ -116,6 +119,7 @@ public class PodcastManagerImpl implements PodcastManager {
                     if (dto.getPodcastCategory() != null) {
                         dto.getPodcast().setId(null);
                         dto.getPodcast().setCreatedDate(new Date());
+                        dto.getPodcast().setIsPublish(false);
 
                         Podcast result = podcastRepository.save(dto.getPodcast());
                         if (result.getShortDescription().contains("#")) {
@@ -319,23 +323,23 @@ public class PodcastManagerImpl implements PodcastManager {
         try {
             if (podcastId != null) {
                 if (image != null) {
+                    int resultImage;
                     String filePath = "";
                     try {
                         Path copyLocation = Paths
                                 .get("C:/xampp/htdocs/coverImages" + File.separator + StringUtils.cleanPath(podcastId.toString() + ".jpg"));
                         Files.copy(image.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
                         InetAddress ip = InetAddress.getLocalHost();
-                        filePath = "http://loacalhost/coverImages/" + StringUtils.cleanPath(podcastId.toString() + ".jpg");
+                        filePath = "http://localhost/coverImages/" + StringUtils.cleanPath(podcastId.toString() + ".jpg");
                     } catch (IOException e) {
                         return new ResponseEntity(ErrorJsonHandler.IO_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
                     }
-                    int resultImage = podcastRepository.updateImageAddress(filePath, podcastId);
+                    resultImage = podcastRepository.updateImageAddress(filePath, podcastId);
 
                     //audio upload
                     int resultAudio = 0;
                     if (audio != null) {
                         String filePathAudio = "";
-                        String audioDuration = "";
                         Path copyLocation;
                         try {
                             copyLocation = Paths
@@ -346,10 +350,11 @@ public class PodcastManagerImpl implements PodcastManager {
                             return new ResponseEntity(ErrorJsonHandler.IO_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
                         }
                         //Duration Calculator
+                        Mp3File mp3file = new Mp3File("C:/xampp/htdocs/podcast" + File.separator + StringUtils.cleanPath(podcastId.toString() + ".mp3"));
+                        Long duration = mp3file.getLengthInSeconds();
 
-                        audioDuration = String.valueOf(audio.getSize());
 
-                        resultAudio = podcastRepository.updateAudioAddress(filePathAudio, audioDuration, podcastId);
+                        resultAudio = podcastRepository.updateAudioAddress(filePathAudio, duration.toString(), podcastId);
                     } else {
                         return new ResponseEntity(ErrorJsonHandler.EMPTY_FILE, HttpStatus.BAD_REQUEST);
                     }
@@ -366,7 +371,52 @@ public class PodcastManagerImpl implements PodcastManager {
             } else {
                 return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
             }
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | IOException | UnsupportedTagException | InvalidDataException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity uploadPodcastWithoutCover(MultipartFile audio, UUID podcastId, UUID userId) {
+        try {
+            if (podcastId != null) {
+                int resultImage;
+                User user = userRepository.findOneById(userId);
+                resultImage = podcastRepository.updateImageAddress(user.getProfileImageAddress(), podcastId);
+
+                //audio upload
+                int resultAudio = 0;
+                if (audio != null) {
+                    String filePathAudio = "";
+                    Path copyLocation;
+                    try {
+                        copyLocation = Paths
+                                .get("C:/xampp/htdocs/podcast" + File.separator + StringUtils.cleanPath(podcastId.toString() + ".mp3"));
+                        Files.copy(audio.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+                        filePathAudio = "http://localhost/podcast/" + StringUtils.cleanPath(podcastId.toString() + ".mp3");
+                    } catch (IOException e) {
+                        return new ResponseEntity(ErrorJsonHandler.IO_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                    //Duration Calculator
+                    Mp3File mp3file = new Mp3File("C:/xampp/htdocs/podcast" + File.separator + StringUtils.cleanPath(podcastId.toString() + ".mp3"));
+                    Long duration = mp3file.getLengthInSeconds();
+
+
+                    resultAudio = podcastRepository.updateAudioAddress(filePathAudio, duration.toString(), podcastId);
+                } else {
+                    return new ResponseEntity(ErrorJsonHandler.EMPTY_FILE, HttpStatus.BAD_REQUEST);
+                }
+
+                if (resultImage == 1 && resultAudio == 1) {
+                    PodcastReadDto finalPodcast = podcastRepository.readPodcastUpload(podcastId);
+                    return ResponseEntity.ok(finalPodcast);
+                } else {
+                    return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException | IOException | UnsupportedTagException | InvalidDataException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -496,15 +546,33 @@ public class PodcastManagerImpl implements PodcastManager {
     }
 
     @Override //Tested
-    public ResponseEntity listPodcastsEachUser(UUID userId, int till, int to) {
+    public ResponseEntity listPodcastsEachUser(int flag, UUID userId, int till, int to) {
         try {
             //this id is for logined user id which is podcasters id
             // default till is 0 and to is 20
-            if (userId != null) {
-                List<PodcastListDto> listPodcastUser = podcastRepository.listPodcastEachUser(userId, PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
-                return ResponseEntity.ok(listPodcastUser);
+            //flag 0 is for my podcasts page
+            //flag 1 is for podcasters page
+            if (flag == 1) {
+                if (userId != null) {
+                    List<PodcastListDto> listPodcastUser = podcastRepository.listPodcastEachUserPublished(userId, PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
+                    return ResponseEntity.ok(listPodcastUser);
+                } else {
+                    return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
+                }
+            } else if (flag == 0) {
+                if (userId != null) {
+                    MyPodcastsResponseDto dto = new MyPodcastsResponseDto();
+                    List<PodcastListDto> listPodcastUserPublished = podcastRepository.listPodcastEachUserPublished(userId, PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
+                    dto.setPublished(listPodcastUserPublished);
+                    List<PodcastListDto> listPodcastUserUnPublished = podcastRepository.listPodcastEachUserUnPublished(userId, PageRequest.of(till, to, Sort.by(Sort.Direction.DESC, "createdDate")));
+                    dto.setUnpublished(listPodcastUserUnPublished);
+
+                    return ResponseEntity.ok(dto);
+                } else {
+                    return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
+                }
             } else {
-                return new ResponseEntity(ErrorJsonHandler.EMPTY_ID_FIELD, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(ErrorJsonHandler.PROBLEM, HttpStatus.BAD_REQUEST);
             }
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -868,8 +936,13 @@ public class PodcastManagerImpl implements PodcastManager {
             Date previousDate = date.getTime();
             Date now = new Date();
             //Podcasts added in last week
-            List<PodcastListDto> latestReleased = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "createdDate")));
-            hpld.setLatestReleased(latestReleased);
+            if (dto.getId() == null) {
+                List<PodcastListDto> latestReleased = podcastRepository.listLatestReleased(previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "createdDate")));
+                hpld.setLatestReleased(latestReleased);
+            } else {
+                List<PodcastListDto> latestReleased = podcastRepository.listLatestReleasedLoginedUser(dto.getId(), previousDate, now, PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "createdDate")));
+                hpld.setLatestReleased(latestReleased);
+            }
             //Podcasts Most Viewed
             List<PodcastListDto> mostViewed = podcastRepository.listMostViewedAndLiked(PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "viewCount")));
             hpld.setMostViewed(mostViewed);
@@ -965,8 +1038,6 @@ public class PodcastManagerImpl implements PodcastManager {
                 hpld.setUsers(finalUsers);
             }
 
-            Random rand = new Random();
-            int upperbound = listParents.size();
             List<CategoryInfoDto> categoryIntroduction = new ArrayList<>();
 
             Collections.shuffle(listParents);
@@ -1203,14 +1274,6 @@ public class PodcastManagerImpl implements PodcastManager {
 
                             //Title
                             String podcastTitle = eElement.getElementsByTagName("title").item(0).getTextContent();
-
-//                            CharsetDetector detector = new CharsetDetector();
-//                            detector.setText(podcastTitle.getBytes());
-//                            String textEncoding = detector.detect().getName();
-//
-//                            byte[] bytes = podcastTitle.getBytes("windows-1252");
-//                            String asciiEncodedString = new String(bytes, "utf-8");
-
                             Podcast pTitle = podcastRepository.findOneByTitleAndUser(podcastTitle, podcasterDetail);
                             if (pTitle == null) {
                                 podcast.setTitle(podcastTitle);
@@ -1299,6 +1362,9 @@ public class PodcastManagerImpl implements PodcastManager {
                             } catch (NullPointerException e) {
                                 podcast.setEpisodeNumber(null);
                             }
+
+                            //Is Publish
+                            podcast.setIsPublish(true);
 
                             podcast.setUser(podcasterDetail);
 
@@ -1608,6 +1674,37 @@ public class PodcastManagerImpl implements PodcastManager {
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.ok(ErrorJsonHandler.EMPTY_BODY);
+            }
+        } catch (NullPointerException e) {
+            return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity updateIsPublish(IdResponseDto dto, int flag) {
+        try {
+            //flag 0 is for upload page
+            //flag 1 is for my podcasts page
+            if (dto != null) {
+                if (flag == 0) {
+                    int result = podcastRepository.updateIsPublish(dto.getId());
+                    if (result == 1) {
+                        return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                    } else {
+                        return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
+                    }
+                } else if (flag == 1) {
+                    int result = podcastRepository.updateIsPublishMyPodcastsPage(dto.getId(), new Date());
+                    if (result == 1) {
+                        return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                    } else {
+                        return ResponseEntity.ok(ErrorJsonHandler.NOT_SUCCESSFUL);
+                    }
+                } else {
+                    return new ResponseEntity(ErrorJsonHandler.PROBLEM, HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return new ResponseEntity(ErrorJsonHandler.EMPTY_BODY, HttpStatus.BAD_REQUEST);
             }
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -47,6 +47,11 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
+    public ResponseEntity uploadPodcastWithoutCover(@RequestParam("audio") MultipartFile audio, @PathVariable("id") UUID podcastId, @PathVariable("userId") UUID userId) {
+        return podcastManager.uploadPodcastWithoutCover(audio, podcastId, userId);
+    }
+
+    @Override
     public ResponseEntity updateViewCount(@RequestBody TwoIDRequestDto dto) {
         return podcastManager.updateViewCount(dto);
     }
@@ -77,8 +82,8 @@ public class PodcastControllerImpl implements PodcastController {
     }
 
     @Override
-    public ResponseEntity listPodcastsEachUser(@PathVariable("id") UUID userId, @PathVariable int till, @PathVariable int to) {
-        return podcastManager.listPodcastsEachUser(userId, till, to);
+    public ResponseEntity listPodcastsEachUser(@PathVariable("flag") int flag, @PathVariable("id") UUID userId, @PathVariable int till, @PathVariable int to) {
+        return podcastManager.listPodcastsEachUser(flag, userId, till, to);
     }
 
     @Override
@@ -154,5 +159,10 @@ public class PodcastControllerImpl implements PodcastController {
     @Override
     public ResponseEntity homePagePodcastListMobileInfinite(@PathVariable int till, @PathVariable int to, @RequestBody IdResponseDto dto) {
         return podcastManager.homePagePodcastListMobileInfinite(till, to, dto);
+    }
+
+    @Override
+    public ResponseEntity updateIsPublish(@RequestBody IdResponseDto dto, @PathVariable int flag) {
+        return podcastManager.updateIsPublish(dto, flag);
     }
 }

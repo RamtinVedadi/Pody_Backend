@@ -22,6 +22,8 @@ public interface PodcastManager {
 
     ResponseEntity uploadPodcast(MultipartFile image, MultipartFile audio, UUID podcastId);
 
+    ResponseEntity uploadPodcastWithoutCover(MultipartFile audio, UUID podcastId, UUID userId);
+
     ResponseEntity updateViewCount(TwoIDRequestDto dto);
 
     ResponseEntity updateLikeCount(TwoIDRequestDto dto);
@@ -30,7 +32,7 @@ public interface PodcastManager {
 
     ResponseEntity userLikeCheck(TwoIDRequestDto dto);
 
-    ResponseEntity listPodcastsEachUser(UUID userId, int till, int to);
+    ResponseEntity listPodcastsEachUser(int flag, UUID userId, int till, int to);
 
     ResponseEntity listPodcastsMostLiked(int till, int to);
 
@@ -65,4 +67,6 @@ public interface PodcastManager {
     ResponseEntity listLikedPodcastsEachUser(UUID userId, int till, int to);
 
     ResponseEntity listHistoryEachUser(UUID userId, int till, int to);
+
+    ResponseEntity updateIsPublish(IdResponseDto dto, int flag);
 }

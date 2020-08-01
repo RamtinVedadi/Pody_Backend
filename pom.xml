@@ -125,6 +125,12 @@
             <artifactId>tritonus-share</artifactId>
             <version>0.3.7-1</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.mpatric</groupId>
+            <artifactId>mp3agic</artifactId>
+            <version>0.9.1</version>
+        </dependency>
     </dependencies>
 
     <build>

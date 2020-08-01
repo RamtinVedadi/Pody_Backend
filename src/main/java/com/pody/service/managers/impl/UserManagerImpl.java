@@ -73,7 +73,7 @@ public class UserManagerImpl implements UserManager {
                 User userInfo = userRepository.findOneById(dto.getFirstID());
                 urrd.setUserInfo(userInfo);
 
-                List<PodcastListDto> userPodcasts = podcastRepository.listPodcastEachUser(dto.getFirstID(), PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdDate")));
+                List<PodcastListDto> userPodcasts = podcastRepository.listPodcastEachUserPublished(dto.getFirstID(), PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdDate")));
                 urrd.setUserPodcasts(userPodcasts);
 
                 List<NewsListDto> userNews = newsRepository.listNewsEachUser(dto.getFirstID(), PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdDate")));
@@ -386,7 +386,7 @@ public class UserManagerImpl implements UserManager {
                 for (ChannelsListDto cld : listFollowings) {
                     SubscriptionsDto sd = new SubscriptionsDto();
                     sd.setChannelInfo(cld);
-                    List<PodcastListDto> channelsPodcast = podcastRepository.listPodcastEachUser(cld.getId(), PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "createdDate")));
+                    List<PodcastListDto> channelsPodcast = podcastRepository.listPodcastEachUserPublished(cld.getId(), PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "createdDate")));
                     sd.setChannelPodcasts(channelsPodcast);
 
                     finalList.add(sd);

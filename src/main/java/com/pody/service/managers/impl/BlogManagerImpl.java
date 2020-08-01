@@ -120,7 +120,7 @@ public class BlogManagerImpl implements BlogManager {
                 } else {
                     brrd.setUserFollow(false);
                 }
-                List<PodcastListDto> lastPodcastOfUser = podcastRepository.listPodcastEachUser(blogInfo.getUserId(), PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createdDate")));
+                List<PodcastListDto> lastPodcastOfUser = podcastRepository.listPodcastEachUserPublished(blogInfo.getUserId(), PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createdDate")));
                 if (lastPodcastOfUser.size() > 0) {
                     brrd.setPodcast(lastPodcastOfUser);
                 } else {

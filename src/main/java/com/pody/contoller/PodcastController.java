@@ -30,6 +30,9 @@ public interface PodcastController {
     @PostMapping(value = UrlStringMapping.URL0044)
     ResponseEntity uploadImage(MultipartFile image, MultipartFile audio, UUID podcastId);
 
+    @PostMapping(value = UrlStringMapping.URL0061)
+    ResponseEntity uploadPodcastWithoutCover(MultipartFile audio, UUID podcastId, UUID userId);
+
     @PostMapping(value = UrlStringMapping.URL0045, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity updateViewCount(TwoIDRequestDto dto);
 
@@ -49,7 +52,7 @@ public interface PodcastController {
     ResponseEntity listHistoryEachUser(UUID userId, int till, int to);
 
     @GetMapping(value = UrlStringMapping.URL0051, produces = APPLICATION_JSON_UTF8_VALUE)
-    ResponseEntity listPodcastsEachUser(UUID userId, int till, int to);
+    ResponseEntity listPodcastsEachUser(int flag, UUID userId, int till, int to);
 
     @GetMapping(value = UrlStringMapping.URL0052, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity listPodcastsMostLiked(int till, int to);
@@ -95,4 +98,7 @@ public interface PodcastController {
 
     @PostMapping(value = UrlStringMapping.URL0068, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity homePagePodcastListMobileInfinite(int till, int to, IdResponseDto dto);
+
+    @PostMapping(value = UrlStringMapping.URL0060, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity updateIsPublish(IdResponseDto dto, int flag);
 }

@@ -35,7 +35,7 @@ public class UrlStringMapping {
     public static final String URL0048 = "/api/podcast/like/check";//POST
     public static final String URL0049 = "/api/podcast/list/like/{id}/user/{till}/{to}";//GET
     public static final String URL0050 = "/api/podcast/list/history/{id}/user/{till}/{to}";//GET
-    public static final String URL0051 = "/api/podcast/list/{id}/user/{till}/{to}";//GET
+    public static final String URL0051 = "/api/podcast/list/{flag}/{id}/user/{till}/{to}";//GET
     public static final String URL0052 = "/api/podcast/list/like/{till}/{to}";//GET لیست محبوب ترین ها
     public static final String URL0053 = "/api/podcast/list/view/{till}/{to}";//GET لیست پر بازدید ترین ها
     public static final String URL0054 = "/api/podcast/list/suggested/{till}/{to}";//GET لیست پیشنهادی
@@ -44,8 +44,8 @@ public class UrlStringMapping {
     public static final String URL0057 = "/api/podcast/list/listenLater/{till}/{to}";//POST
     public static final String URL0058 = "/api/podcast/listenLater/check";//POST
     public static final String URL0059 = "/api/podcast/listenLater/delete";//DELETE
-    public static final String URL0060 = "";
-    public static final String URL0061 = "";
+    public static final String URL0060 = "/api/podcast/{flag}/publish/update";//POST
+    public static final String URL0061 = "/api/podcast/{id}/user/{userId}/upload";//POST upload without podcast cover image
     public static final String URL0062 = "/api/podcast/rss";//POST
     public static final String URL0063 = "/api/podcast/list/trending";//GET
     public static final String URL0064 = "/api/podcast/list/home";//Post
