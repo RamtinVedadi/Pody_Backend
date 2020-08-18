@@ -923,6 +923,26 @@ public class PodcastManagerImpl implements PodcastManager {
 
     @Override
     public ResponseEntity homePagePodcastList(IdResponseDto dto) {
+//        {
+//            id: 'sadfd-sadas-asdsad',
+//                    image: 'http://pody.ir/defaultImages/special/Haghogh_Cast%D9%80Cover_Low.jpg',
+//                title: 'حقوق کست'
+//        },
+//        {
+//            id: 'sadfd-sadas-asdsad',
+//                    image: 'http://pody.ir/defaultImages/special/lunch_timejpg.jpg',
+//                title: 'به وقت ناهار'
+//        },
+//        {
+//            id: 'sadfd-sadas-asdsad',
+//                    image: 'http://pody.ir/defaultImages/special/nasim_khani_cover_with_logo_low.jpg',
+//                title: 'نسیم خوانی'
+//        },
+//        {
+//            id: 'sadfd-sadas-asdsad',
+//                    image: 'http://pody.ir/defaultImages/special/cover_low.jpg',
+//                title: 'پادکست منتقدین'
+//        }
         try {
             HomePageListDto hpld = new HomePageListDto();
 

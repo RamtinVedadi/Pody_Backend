@@ -82,11 +82,15 @@ public class UserManagerImpl implements UserManager {
                 if (dto.getSecondID() == null) {
                     urrd.setIsFollow(false);
                 } else {
-                    UserFollow isFollow = userFollowRepository.isUserFollowAvailable(dto.getSecondID(), dto.getFirstID());
-                    if (isFollow != null) {
+                    if (dto.getFirstID().toString().equals(dto.getSecondID().toString())) {
                         urrd.setIsFollow(true);
                     } else {
-                        urrd.setIsFollow(false);
+                        UserFollow isFollow = userFollowRepository.isUserFollowAvailable(dto.getSecondID(), dto.getFirstID());
+                        if (isFollow != null) {
+                            urrd.setIsFollow(true);
+                        } else {
+                            urrd.setIsFollow(false);
+                        }
                     }
                 }
 
@@ -173,7 +177,8 @@ public class UserManagerImpl implements UserManager {
             }
             int result = userRepository.updateImageAddress(filePath, id);
             if (result == 1) {
-                return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                User user = userRepository.findOneById(id);
+                return ResponseEntity.ok(user);
             } else {
                 return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
             }
