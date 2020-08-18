@@ -95,4 +95,9 @@ public class UserControllerImpl implements UserController {
         return userManager.checkUserHasFollow(dto);
     }
 
+    @Override
+    public ResponseEntity uploadChannelImages(@RequestParam("cover") MultipartFile channelImage, @RequestParam("page") MultipartFile pageImage, @PathVariable UUID id) {
+        return userManager.uploadChannelImages(channelImage, pageImage, id);
+    }
+
 }

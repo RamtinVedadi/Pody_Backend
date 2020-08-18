@@ -89,7 +89,6 @@ public class User extends AbstractModelUser {
         this.rssUrl = rssUrl;
     }
 
-
     @Override
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();

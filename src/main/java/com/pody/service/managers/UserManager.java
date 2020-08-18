@@ -41,4 +41,6 @@ public interface UserManager {
     ResponseEntity checkUserHasFollow(TwoIDRequestDto dto);
 
     ResponseEntity userListSubscriptionsSideNav(UUID id);
+
+    ResponseEntity uploadChannelImages(MultipartFile channelImage, MultipartFile pageImage, UUID id);
 }

@@ -21,6 +21,7 @@ public class UrlStringMapping {
     public static final String URL0022 = "/api/user/list/subscriptions/{id}";//Get
     public static final String URL0023 = "/api/user/list/subscriptions/sidenav/{id}";//Get
     public static final String URL0024 = "/api/user/follow/check";//Post
+    public static final String URL0025 = "/api/user/upload/{id}/images";//Post
     //search urls
     public static final String URL0100 = "/api/search";//POST
     //podcast urls

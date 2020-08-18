@@ -109,7 +109,7 @@ public class UserManagerImpl implements UserManager {
                     dbUser.setUpdateDate(new Date());
                     User result = userRepository.save(dbUser);
                     if (result != null) {
-                        return ResponseEntity.ok(result);
+                        return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
                     } else {
                         return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
                     }
@@ -438,6 +438,64 @@ public class UserManagerImpl implements UserManager {
             }
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity uploadChannelImages(MultipartFile channelImage, MultipartFile pageImage, UUID id) {
+        if (channelImage == null || channelImage.isEmpty() || pageImage.isEmpty()) {
+            return new ResponseEntity(ErrorJsonHandler.NO_FILE_SELECTED, HttpStatus.BAD_REQUEST);
+        } else {
+            if (pageImage == null) {
+                String filePath = "";
+
+                try {
+                    Path copyLocation = Paths
+                            .get("C:/xampp/htdocs/profileImages" + File.separator + StringUtils.cleanPath(id.toString() + ".jpg"));
+                    Files.copy(channelImage.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+                    filePath = "http://localhost/profileImages" + File.separator + StringUtils.cleanPath(id.toString() + ".jpg");
+                } catch (IOException e) {
+                    return new ResponseEntity(ErrorJsonHandler.IO_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+                int result = userRepository.updateImageAddress(filePath, id);
+                if (result == 1) {
+                    return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                } else {
+                    return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                String filePath = "";
+
+                try {
+                    Path copyLocation = Paths
+                            .get("C:/xampp/htdocs/profileImages" + File.separator + StringUtils.cleanPath(id.toString() + ".jpg"));
+                    Files.copy(channelImage.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+                    filePath = "http://localhost/profileImages" + File.separator + StringUtils.cleanPath(id.toString() + ".jpg");
+                } catch (IOException e) {
+                    return new ResponseEntity(ErrorJsonHandler.IO_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+                int resultImageAddress = userRepository.updateImageAddress(filePath, id);
+
+                //channel page image
+                String channelImagePath = "";
+
+                try {
+                    Path copyLocation = Paths
+                            .get("C:/xampp/htdocs/channelImage" + File.separator + StringUtils.cleanPath(id.toString() + ".jpg"));
+                    Files.copy(pageImage.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+                    channelImagePath = "http://localhost/channelImage" + File.separator + StringUtils.cleanPath(id.toString() + ".jpg");
+                } catch (IOException e) {
+                    return new ResponseEntity(ErrorJsonHandler.IO_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+                int resultChannelImage = userRepository.updateChannelImage(channelImagePath, id);
+
+                if (resultImageAddress == 1 && resultChannelImage == 1) {
+                    User user = userRepository.findOneById(id);
+                    return ResponseEntity.ok(user);
+                } else {
+                    return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
         }
     }
 }

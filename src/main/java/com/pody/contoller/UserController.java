@@ -63,4 +63,7 @@ public interface UserController {
 
     @PostMapping(value = UrlStringMapping.URL0024, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity checkUserHasFollow(TwoIDRequestDto dto);
+
+    @PostMapping(value = UrlStringMapping.URL0025, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity uploadChannelImages(MultipartFile channelImage, MultipartFile pageImage, UUID id);
 }
