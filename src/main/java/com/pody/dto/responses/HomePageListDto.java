@@ -42,4 +42,7 @@ public class HomePageListDto {
 
     @JsonProperty("blogs")
     List<BlogListDto> blogs;
+
+    @JsonProperty("special")
+    List<SpecialPodcastsDto> specials;
 }

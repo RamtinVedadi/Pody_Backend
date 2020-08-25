@@ -1078,6 +1078,37 @@ public class PodcastManagerImpl implements PodcastManager {
             List<BlogListDto> blogs = blogRepository.listBlogs(PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "createdDate")));
             hpld.setBlogs(blogs);
 
+            SpecialPodcastsDto spd = new SpecialPodcastsDto();
+            spd.setId(UUID.fromString("fde74f03-3ecb-4151-9ca9-416b23d340c2"));
+            spd.setImage("http://pody.ir/defaultImages/special/nasim_khani_cover_with_logo_low.jpg");
+            spd.setTitle("نسیم خوانی");
+            spd.setDisable(false);
+
+            SpecialPodcastsDto spd1 = new SpecialPodcastsDto();
+            spd1.setId(UUID.fromString("fde74f03-3ecb-4151-9ca9-416b23d340c2"));
+            spd1.setImage("http://pody.ir/defaultImages/special/Haghogh_Cast%D9%80Cover_Low.jpg");
+            spd1.setTitle("حقوق کست");
+            spd1.setDisable(true);
+
+            SpecialPodcastsDto spd2 = new SpecialPodcastsDto();
+            spd2.setId(UUID.fromString("fde74f03-3ecb-4151-9ca9-416b23d340c2"));
+            spd2.setImage("http://pody.ir/defaultImages/special/lunch_timejpg.jpg");
+            spd2.setTitle("به وقت ناهار");
+            spd2.setDisable(true);
+
+            SpecialPodcastsDto spd3 = new SpecialPodcastsDto();
+            spd3.setId(UUID.fromString("fde74f03-3ecb-4151-9ca9-416b23d340c2"));
+            spd3.setImage("http://pody.ir/defaultImages/special/cover_low.jpg");
+            spd3.setTitle("پادکست منتقدین");
+            spd3.setDisable(true);
+
+            List<SpecialPodcastsDto> specials = new ArrayList<>();
+            specials.add(spd1);
+            specials.add(spd);
+            specials.add(spd2);
+            specials.add(spd3);
+            hpld.setSpecials(specials);
+
             return ResponseEntity.ok(hpld);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
