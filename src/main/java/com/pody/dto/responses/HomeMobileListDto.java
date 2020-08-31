@@ -30,4 +30,7 @@ public class HomeMobileListDto {
 
     @JsonProperty("users")
     List<ChannelsListDto> users;
+
+    @JsonProperty("special")
+    List<SpecialPodcastsDto> specials;
 }
