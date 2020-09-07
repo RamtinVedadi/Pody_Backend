@@ -1102,11 +1102,18 @@ public class PodcastManagerImpl implements PodcastManager {
             spd3.setTitle("پادکست منتقدین");
             spd3.setDisable(true);
 
+            SpecialPodcastsDto spd4 = new SpecialPodcastsDto();
+            spd4.setId(UUID.fromString("86055d0c-6dae-4086-ac10-08d381723f60"));
+            spd4.setImage("http://194.5.175.213/profileImages/86055d0c-6dae-4086-ac10-08d381723f60.jpg");
+            spd4.setTitle("موسیقی آرامش بخش");
+            spd4.setDisable(false);
+
             List<SpecialPodcastsDto> specials = new ArrayList<>();
             specials.add(spd1);
             specials.add(spd);
             specials.add(spd2);
             specials.add(spd3);
+            specials.add(spd4);
             hpld.setSpecials(specials);
 
             return ResponseEntity.ok(hpld);
