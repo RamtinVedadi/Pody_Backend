@@ -69,4 +69,6 @@ public interface PodcastManager {
     ResponseEntity listHistoryEachUser(UUID userId, int till, int to);
 
     ResponseEntity updateIsPublish(IdResponseDto dto, int flag);
+
+    ResponseEntity rssForceUpdate(IdResponseDto dto);
 }

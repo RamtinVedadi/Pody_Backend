@@ -54,6 +54,7 @@ public class UrlStringMapping {
     public static final String URL0066 = "/api/podcast/list/followings/{till}/{to}";//Post لیست پادکست پادکسترهای دنبال شده
     public static final String URL0067 = "/api/podcast/list/home/mobile";//Post
     public static final String URL0068 = "/api/podcast/list/home/mobile/infinite/{till}/{to}";//Post
+    public static final String URL0069 = "/api/podcast/rss/force";//Post
     //category urls
     public static final String URL0110 = "/api/admin/category/create";//POST
     public static final String URL0111 = "/api/admin/category/update/{id}";//PUT

@@ -107,7 +107,7 @@ public class RssUpdateScheduling {
                                 //Title
                                 String podcastTitle = eElement.getElementsByTagName("title").item(0).getTextContent();
                                 List<Podcast> pTitle = podcastRepository.findPodcastsByTitleAndUser(podcastTitle, podcasterDetail);
-                                if (pTitle == null) {
+                                if (pTitle == null || pTitle.size() == 0) {
                                     podcast.setTitle(podcastTitle);
                                 } else {
                                     continue;
@@ -197,6 +197,7 @@ public class RssUpdateScheduling {
 
 
                                 podcast.setUser(podcasterDetail);
+                                podcast.setIsPublish(true);
 
                                 userPodcasts.add(podcast);
                             }

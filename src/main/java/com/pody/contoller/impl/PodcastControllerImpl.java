@@ -165,4 +165,9 @@ public class PodcastControllerImpl implements PodcastController {
     public ResponseEntity updateIsPublish(@RequestBody IdResponseDto dto, @PathVariable int flag) {
         return podcastManager.updateIsPublish(dto, flag);
     }
+
+    @Override
+    public ResponseEntity rssForceUpdate(@RequestBody IdResponseDto dto) {
+        return podcastManager.rssForceUpdate(dto);
+    }
 }

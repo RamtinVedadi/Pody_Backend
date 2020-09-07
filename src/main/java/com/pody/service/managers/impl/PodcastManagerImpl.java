@@ -1801,6 +1801,185 @@ public class PodcastManagerImpl implements PodcastManager {
         }
     }
 
+    @Override
+    public ResponseEntity rssForceUpdate(IdResponseDto dto) {
+        try {
+            User u = userRepository.findOneById(dto.getId());
+            if (u.getRssUrl() == null || u.getRssUrl().equals("")) {
+                return ResponseEntity.ok(ErrorJsonHandler.PROBLEM);
+            } else {
+                try {
+                    User podcasterDetail = new User();
+                    podcasterDetail.setId(u.getId());
+                    podcasterDetail.setRssUrl(u.getRssUrl());
+                    podcasterDetail.setProfileImageAddress(u.getProfileImageAddress());
+
+                    List<Podcast> userPodcasts = new ArrayList<>();
+
+                    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                    URLConnection connection = new URL(u.getRssUrl()).openConnection();
+                    connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.29 Safari/537.36");
+                    Document doc = dBuilder.parse(connection.getInputStream());
+                    doc.getDocumentElement().normalize();
+
+                    String category = doc.getElementsByTagName("itunes:category").item(0).getAttributes().getNamedItem("text").getTextContent();
+                    Category mainCategory;
+                    Category subCategory;
+
+                    if (category != null) {
+                        mainCategory = categoryRepository.findOneByEnglishName(category);
+                    } else {
+                        mainCategory = null;
+                    }
+
+                    Node categoryList = doc.getElementsByTagName("itunes:category").item(1);
+                    Element categoryElement = (Element) categoryList;
+                    if (categoryElement == null) {
+                        subCategory = null;
+                    } else {
+                        if (categoryElement.getElementsByTagName("itunes:category").item(0) != null) {
+                            String childCategory = categoryElement.getElementsByTagName("itunes:category").item(0).getAttributes().getNamedItem("text").getTextContent();
+                            subCategory = categoryRepository.findOneByEnglishName(childCategory);
+                        } else {
+                            subCategory = null;
+                        }
+                    }
+
+                    NodeList nList = doc.getElementsByTagName("item");
+                    for (int temp = 0; temp < nList.getLength(); temp++) {
+                        Node nNode = nList.item(temp);
+
+                        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                            Element eElement = (Element) nNode;
+                            Podcast podcast = new Podcast();
+
+                            //Title
+                            String podcastTitle = eElement.getElementsByTagName("title").item(0).getTextContent();
+                            List<Podcast> pTitle = podcastRepository.findPodcastsByTitleAndUser(podcastTitle, podcasterDetail);
+                            if (pTitle == null || pTitle.size() == 0) {
+                                podcast.setTitle(podcastTitle);
+                            } else {
+                                continue;
+                            }
+
+                            //Created Date
+                            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss");
+                            Date createDate = formatter.parse(eElement.getElementsByTagName("pubDate").item(0).getTextContent());
+                            podcast.setCreatedDate(createDate);
+
+                            //Image Address
+                            try {
+                                String imageAddress = eElement.getElementsByTagName("itunes:image").item(0).getAttributes().getNamedItem("href").getTextContent();
+
+                                if (imageAddress.endsWith("g")) {
+                                    podcast.setImageAddress(imageAddress);
+                                } else {
+                                    imageAddress += imageAddress + "g";
+                                    podcast.setImageAddress(imageAddress);
+                                }
+                            } catch (NullPointerException e) {
+                                podcast.setImageAddress(podcasterDetail.getProfileImageAddress());
+                            }
+
+                            //Audio Address
+                            try {
+                                String audioAddress = eElement.getElementsByTagName("enclosure").item(0).getAttributes().getNamedItem("url").getTextContent();
+                                podcast.setAudioAddress(audioAddress);
+                            } catch (NullPointerException e) {
+                                continue;
+                            }
+
+                            //Description
+                            try {
+                                String description = eElement.getElementsByTagName("description").item(0).getTextContent();
+                                if (description != null || description != "") {
+                                    podcast.setDescription(description);
+                                } else {
+                                    podcast.setDescription("");
+                                }
+                            } catch (NullPointerException e) {
+                                podcast.setDescription("");
+                            }
+
+                            //Short Description
+                            try {
+                                String shortDescription = eElement.getElementsByTagName("itunes:summary").item(0).getTextContent();
+                                if (shortDescription.length() > 150) {
+                                    shortDescription = shortDescription.substring(0, 149);
+                                }
+                                if (shortDescription != null || shortDescription != "") {
+                                    podcast.setShortDescription(shortDescription);
+                                } else {
+                                    podcast.setShortDescription("");
+                                }
+                            } catch (NullPointerException e) {
+                                podcast.setShortDescription("");
+                            }
+
+                            //Duration
+                            try {
+                                String duration = eElement.getElementsByTagName("itunes:duration").item(0).getTextContent();
+                                if (duration != null || duration != "") {
+                                    podcast.setDuration(duration);
+                                } else {
+                                    podcast.setDuration("");
+                                }
+                            } catch (NullPointerException e) {
+                                podcast.setDuration("");
+                            }
+
+                            //Season Number
+                            try {
+                                Integer season = Integer.parseInt(eElement.getElementsByTagName("itunes:season").item(0).getTextContent());
+                                podcast.setSeasonNumber(season);
+                            } catch (NullPointerException e) {
+                                podcast.setSeasonNumber(null);
+                            }
+
+                            //Episode Number
+                            try {
+                                Integer episode = Integer.parseInt(eElement.getElementsByTagName("itunes:episode").item(0).getTextContent());
+                                podcast.setEpisodeNumber(episode);
+                            } catch (NullPointerException e) {
+                                podcast.setEpisodeNumber(null);
+                            }
+
+
+                            podcast.setUser(podcasterDetail);
+                            podcast.setIsPublish(true);
+
+                            userPodcasts.add(podcast);
+                        }
+                    }
+
+                    List<Podcast> finalList = userPodcasts.stream()
+                            .collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(Podcast::getTitle))),
+                                    ArrayList::new));
+
+                    List<Podcast> result = podcastRepository.saveAll(finalList);
+
+                    if (result != null || !result.isEmpty()) {
+                        for (Podcast p : result) {
+                            PodcastCategory pc = new PodcastCategory();
+                            pc.setPodcast(p);
+                            pc.setCategory(mainCategory);
+                            pc.setSubCategory(subCategory);
+                            podcastCategoryRepository.save(pc);
+                        }
+                    }
+                    return ResponseEntity.ok(ErrorJsonHandler.SUCCESSFUL);
+                } catch (ParserConfigurationException | SAXException | IOException | ParseException e) {
+                    e.printStackTrace();
+                    return new ResponseEntity(ErrorJsonHandler.PROBLEM, HttpStatus.BAD_REQUEST);
+                }
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return new ResponseEntity(ErrorJsonHandler.PROBLEM, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     public boolean isProbablyArabic(String s) {
         for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);

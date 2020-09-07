@@ -101,4 +101,7 @@ public interface PodcastController {
 
     @PostMapping(value = UrlStringMapping.URL0060, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     ResponseEntity updateIsPublish(IdResponseDto dto, int flag);
+
+    @PostMapping(value = UrlStringMapping.URL0069, consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity rssForceUpdate(IdResponseDto dto);
 }
