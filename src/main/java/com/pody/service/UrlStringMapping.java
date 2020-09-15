@@ -105,4 +105,12 @@ public class UrlStringMapping {
     public static final String URL0260 = "/api/blog/bookmark";//POST
     public static final String URL0261 = "/api/blog/unbookmark";//POST
     public static final String URL0262 = "/api/blog/bookmark/check";//POST
+    //playlist urls
+    public static final String URL0300 = "/api/playlist/create";//POST ساهت خود پلی لیست
+    public static final String URL0301 = "/api/playlist/add/channel";//POST
+    public static final String URL0302 = "/api/playlist/update/{id}";//POST
+    public static final String URL0303 = "/api/playlist/{id}/image";//POST
+    public static final String URL0304 = "/api/playlist/read";//POST
+    public static final String URL0305 = "/api/playlist/read/all";//GET
+
 }

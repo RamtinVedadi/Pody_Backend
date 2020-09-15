@@ -118,6 +118,10 @@ public interface UserRepository extends AbstractRepository<User, UUID> {
             " from User u inner join UserFollow uf on u.id = uf.follower.id where u.id = :userId")
     List<ChannelsListDto> listHomePageUsersWithFollowed(@Param("userId") UUID userId, Pageable pageable);//this user id is id of signed in user
 
+    @Query("select u.id as id, u.username as username, u.profileImageAddress as imageAddress, u.followerCount as followCount" +
+            " from User u inner join PlaylistChannels pc on u.id = pc.channel.id where pc.playlist.id = :playlistId")
+    List<ChannelsListDto> listChannelsPlaylist(@Param("playlistId") UUID playlistId);
+
     @Query("select u.id as id, u.updateDate as createdDate from User u where u.isChannel = true ")
     List<UserSitemapDto> listUserSitemap();//this user id is id of signed in user
 }

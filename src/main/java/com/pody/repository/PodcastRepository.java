@@ -1,9 +1,6 @@
 package com.pody.repository;
 
-import com.pody.dto.repositories.PodcastListDto;
-import com.pody.dto.repositories.PodcastReadDto;
-import com.pody.dto.repositories.PodcastSitemapDto;
-import com.pody.dto.repositories.PodcastTrendingDto;
+import com.pody.dto.repositories.*;
 import com.pody.model.Podcast;
 import com.pody.model.User;
 import org.springframework.data.domain.Pageable;
@@ -69,6 +66,15 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " p.viewCount as viewCount , p.likeCount as likeCount, p.duration as duration, u.id as userId," +
             " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
             " from Podcast p inner join User u on p.user.id = u.id " +
+            " inner join PlaylistPodcasts pp on p.id = pp.podcast.id " +
+            " where pp.playlist.id = :playlistId and p.isPublish = true ")
+    List<PodcastListDto> listPodcastsPlaylist(@Param("playlistId") UUID playlistId, Pageable pageable);//Also use for One Month Data
+
+    @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
+            " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
+            " p.viewCount as viewCount , p.likeCount as likeCount, p.duration as duration, u.id as userId," +
+            " u.username as username, u.title as userTitle, u.profileImageAddress as profileImageAddress" +
+            " from Podcast p inner join User u on p.user.id = u.id " +
             " where p.createdDate between :lastWeek and :today and p.isPublish = true and not p.user.id = :userId")
     List<PodcastListDto> listLatestReleasedLoginedUser(@Param("userId") UUID userId, @Param("lastWeek") Date lastWeek, @Param("today") Date today, Pageable pageable);//Also use for One Month Data
 
@@ -88,6 +94,11 @@ public interface PodcastRepository extends AbstractRepository<Podcast, UUID> {
             " inner join UserFollow uf on p.user.id = uf.follower.id " +
             " where uf.user.id = :userId and p.isPublish = true ")
     List<PodcastListDto> listFollowingPodcasters(@Param("userId") UUID userId, Pageable pageable);//One Month Data
+
+    @Query("select p.id as podcastId " +
+            " from Podcast p inner join User u on p.user.id = u.id " +
+            " where u.id  = :userId and p.isPublish = true ")
+    List<IdListDto> listPodcastsForPlaylist(@Param("userId") UUID userId, Pageable pageable);//One Month Data
 
     @Query("select p.id as podcastId, p.title as title, p.imageAddress as podcastImage, p.audioAddress as audioAddress," +
             " p.episodeNumber as episodeNumber, p.seasonNumber as seasonNumber," +
