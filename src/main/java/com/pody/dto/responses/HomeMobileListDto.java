@@ -2,6 +2,7 @@ package com.pody.dto.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pody.dto.repositories.*;
+import com.pody.dto.repositories.PlaylistReadDto;
 import com.pody.dto.repositories.PodcastListDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,4 +34,7 @@ public class HomeMobileListDto {
 
     @JsonProperty("special")
     List<SpecialPodcastsDto> specials;
+
+    @JsonProperty("playlist")
+    List<PlaylistReadDto> playlist;
 }

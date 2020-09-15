@@ -7,6 +7,7 @@ import java.net.URL;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
+import com.pody.dto.repositories.PlaylistReadDto;
 import com.pody.model.*;
 import org.w3c.dom.Node;
 
@@ -78,6 +79,7 @@ public class PodcastManagerImpl implements PodcastManager {
     private PodcastViewRepository podcastViewRepository;
     private PodcastLikeRepository podcastLikeRepository;
     private CategoryRepository categoryRepository;
+    private PlaylistRepository playlistRepository;
     private PodcastRepository podcastRepository;
     private HashtagRepository hashtagRepository;
     private HistoryRepository historyRepository;
@@ -91,7 +93,7 @@ public class PodcastManagerImpl implements PodcastManager {
     public PodcastManagerImpl(PodcastCategoryRepository podcastCategoryRepository, PodcastHashtagRepository podcastHashtagRepository,
                               UserCategoryRespository userCategoryRespository, ListenLaterRepository listenLaterRepository,
                               PodcastViewRepository podcastViewRepository, PodcastLikeRepository podcastLikeRepository, CategoryRepository categoryRepository,
-                              PodcastRepository podcastRepository, HashtagRepository hashtagRepository,
+                              PlaylistRepository playlistRepository, PodcastRepository podcastRepository, HashtagRepository hashtagRepository,
                               HistoryRepository historyRepository, CommentRepository commentRepository, BlogRepository blogRepository, NewsRepository newsRepository,
                               UserRepository userRepository, ModelMapper modelMapper) {
         this.podcastCategoryRepository = podcastCategoryRepository;
@@ -101,6 +103,7 @@ public class PodcastManagerImpl implements PodcastManager {
         this.podcastViewRepository = podcastViewRepository;
         this.podcastLikeRepository = podcastLikeRepository;
         this.categoryRepository = categoryRepository;
+        this.playlistRepository = playlistRepository;
         this.podcastRepository = podcastRepository;
         this.hashtagRepository = hashtagRepository;
         this.historyRepository = historyRepository;
@@ -1116,6 +1119,9 @@ public class PodcastManagerImpl implements PodcastManager {
             specials.add(spd4);
             hpld.setSpecials(specials);
 
+            List<PlaylistReadDto> playlistRead = playlistRepository.listAllPlaylists();
+            hpld.setPlaylist(playlistRead);
+
             return ResponseEntity.ok(hpld);
         } catch (NullPointerException e) {
             return new ResponseEntity(ErrorJsonHandler.NULL_POINTER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -1609,6 +1615,8 @@ public class PodcastManagerImpl implements PodcastManager {
             specials.add(spd3);
             hpld.setSpecials(specials);
 
+            List<PlaylistReadDto> playlistRead = playlistRepository.listAllPlaylists();
+            hpld.setPlaylist(playlistRead);
 
             return ResponseEntity.ok(hpld);
         } catch (NullPointerException e) {
