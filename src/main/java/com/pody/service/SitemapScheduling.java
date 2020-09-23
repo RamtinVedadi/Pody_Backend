@@ -154,6 +154,7 @@ public class SitemapScheduling {
 
             List<String> finalList = new ArrayList<>();
 
+            finalList.add("http://pody.ir");
             Integer countEpisodes = podcastRepository.countEpisodes();
             int pageSizes = countEpisodes / 2500;
             for (int i = 0; i <= pageSizes; i++) {
